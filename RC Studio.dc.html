@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+--background:oklch(0.985 0.012 292);--ink:oklch(0.19 0.035 292);--muted-ink:oklch(0.5 0.035 292);
+--surface:oklch(1 0 0);--brand:oklch(0.47 0.245 292);--brand-bright:oklch(0.55 0.23 292);
+--brand-deep:oklch(0.3 0.15 292);--brand-soft:oklch(0.96 0.025 292);--muted:oklch(0.965 0.018 292);
+--line:oklch(0.92 0.018 292);--ring:oklch(0.62 0.16 292);--success:oklch(0.58 0.18 145);
+--warning:oklch(0.67 0.17 65);--error:oklch(0.58 0.22 25);--teal:oklch(0.7 0.13 190);--peach:oklch(0.78 0.13 55);
+--c1:oklch(0.47 0.245 292);--c2:oklch(0.66 0.15 292);--c3:oklch(0.72 0.13 190);--c4:oklch(0.78 0.13 65);--c5:oklch(0.7 0.13 35);
+--grad:linear-gradient(120deg,oklch(0.47 0.245 292) 0%,oklch(0.7 0.16 292) 52%,oklch(0.82 0.14 70) 100%);
+--card-bg:color-mix(in oklch,white 94%,var(--brand-soft));
+--card-sh:0 8px 28px oklch(0.3 0.06 292 / 0.045);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--background);color:var(--ink);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--brand);text-decoration:none}
+a:hover{color:var(--brand-bright)}
+input,button,textarea,select{font-family:inherit}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:oklch(0.85 0.02 292);border-radius:8px;border:3px solid transparent;background-clip:content-box}
+@keyframes rcIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+
+<div style="display:flex;min-height:100vh;background:var(--background)">
+
+  <aside style="flex:none;width:{{ sidebarWidth }};background:linear-gradient(180deg,oklch(0.19 0.045 292) 0%,oklch(0.13 0.03 292) 100%);color:oklch(0.94 0.015 292);display:flex;flex-direction:column;padding:18px 14px;gap:18px;position:sticky;top:0;height:100vh;overflow-y:auto;overflow-x:hidden;transition:width .18s ease">
+    <div style="display:flex;align-items:center;gap:11px;padding:0 4px">
+      <div style="flex:none;width:34px;height:34px;border-radius:11px;background:linear-gradient(120deg,oklch(0.47 0.245 292) 0%,oklch(0.7 0.16 292) 52%,oklch(0.82 0.14 70) 100%);display:flex;align-items:center;justify-content:center;font-family:Sora,sans-serif;font-weight:700;font-size:14px;color:white;box-shadow:0 6px 18px oklch(0.47 0.245 292 / .45)">RC</div>
+      <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}">
+        <div style="flex:1;min-width:0">
+          <div style="font-family:Sora,sans-serif;font-weight:600;font-size:15px;letter-spacing:-0.01em">RC Studio</div>
+          <div style="font-size:10.5px;color:oklch(0.94 0.015 292 / .45);letter-spacing:.08em;text-transform:uppercase">Hiring OS</div>
+        </div>
+      </sc-if>
+      <button onClick="{{ toggleSidebar }}" style="flex:none;width:26px;height:26px;border-radius:7px;border:1px solid oklch(0.94 0.015 292 / .14);background:transparent;color:oklch(0.94 0.015 292 / .55);cursor:pointer;font-size:13px;line-height:1;display:flex;align-items:center;justify-content:center" style-hover="background:oklch(0.94 0.015 292 / .1);color:white">{{ collapseIcon }}</button>
+    </div>
+
+    <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}">
+      <div style="position:relative">
+        <button onClick="{{ toggleWs }}" style="width:100%;display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;border:1px solid oklch(0.94 0.015 292 / .13);background:oklch(0.94 0.015 292 / .06);color:inherit;cursor:pointer;text-align:left" style-hover="background:oklch(0.94 0.015 292 / .11)">
+          <div style="flex:none;width:24px;height:24px;border-radius:7px;background:oklch(0.7 0.19 292 / .22);color:oklch(0.82 0.12 292);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">{{ workspaceInitial }}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ workspace }}</div>
+            <div style="font-size:10.5px;color:oklch(0.94 0.015 292 / .45)">Client workspace</div>
+          </div>
+          <span style="flex:none;font-size:10px;color:oklch(0.94 0.015 292 / .5)">▾</span>
+        </button>
+        <sc-if value="{{ wsOpen }}">
+          <div style="position:absolute;z-index:60;top:calc(100% + 6px);left:0;right:0;background:oklch(0.16 0.035 292);border:1px solid oklch(0.94 0.015 292 / .13);border-radius:12px;padding:6px;box-shadow:0 18px 40px oklch(0.1 0.04 292 / .55);animation:rcIn .14s ease">
+            <div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:oklch(0.94 0.015 292 / .4);padding:6px 8px">Switch workspace</div>
+            <sc-for list="{{ workspaces }}" as="w" hint-placeholder-count="4">
+              <button onClick="{{ w.pick }}" style="width:100%;display:flex;align-items:center;gap:9px;padding:8px;border:0;border-radius:9px;background:{{ w.bg }};color:inherit;cursor:pointer;text-align:left" style-hover="background:oklch(0.94 0.015 292 / .09)">
+                <div style="flex:none;width:20px;height:20px;border-radius:6px;background:oklch(0.7 0.19 292 / .2);color:oklch(0.82 0.12 292);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">{{ w.initial }}</div>
+                <span style="flex:1;font-size:12.5px;font-weight:500">{{ w.name }}</span>
+                <span style="font-size:10.5px;color:oklch(0.94 0.015 292 / .45)">{{ w.roles }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <nav style="display:flex;flex-direction:column;gap:22px;overflow:visible;flex:none">
+      <sc-for list="{{ navGroups }}" as="g" hint-placeholder-count="2">
+        <div style="display:flex;flex-direction:column;gap:3px">
+          <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}">
+            <div style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:oklch(0.94 0.015 292 / .35);padding:0 10px 6px;font-weight:600">{{ g.label }}</div>
+          </sc-if>
+          <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="5">
+            <button onClick="{{ it.go }}" title="{{ it.label }}" style="height:40px;width:100%;display:flex;align-items:center;gap:12px;border:0;border-radius:10px;padding:0 11px;cursor:pointer;background:{{ it.bg }};color:{{ it.fg }};font-size:13.5px;font-weight:{{ it.weight }};transition:background .15s,color .15s" style-hover="background:oklch(0.94 0.015 292 / .08)">
+              <span style="flex:none;width:18px;text-align:center;font-size:14px">{{ it.icon }}</span>
+              <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}">
+                <span style="flex:1;text-align:left;white-space:nowrap">{{ it.label }}</span>
+              </sc-if>
+              <sc-if value="{{ it.count }}">
+                <span style="margin-left:auto;flex:none;min-width:20px;height:19px;padding:0 6px;border-radius:999px;background:oklch(0.7 0.19 292);color:oklch(0.15 0.04 292);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center">{{ it.count }}</span>
+              </sc-if>
+            </button>
+          </sc-for>
+        </div>
+      </sc-for>
+    </nav>
+
+    <div style="display:flex;flex-direction:column;gap:4px;border-top:1px solid oklch(0.94 0.015 292 / .1);padding-top:12px;margin-top:auto;flex:none">
+      <button style="height:36px;display:flex;align-items:center;gap:12px;border:0;border-radius:10px;padding:0 11px;background:transparent;color:oklch(0.94 0.015 292 / .55);font-size:13px;cursor:pointer" style-hover="background:oklch(0.94 0.015 292 / .08);color:white">
+        <span style="flex:none;width:18px;text-align:center">◌</span>
+        <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}"><span>Help center</span></sc-if>
+      </button>
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 8px 2px">
+        <div style="flex:none;width:28px;height:28px;border-radius:9px;background:linear-gradient(120deg,oklch(0.47 0.245 292),oklch(0.82 0.14 70));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white">JD</div>
+        <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Jamie Doe</div>
+            <div style="font-size:10.5px;color:oklch(0.94 0.015 292 / .45);white-space:nowrap">Admin</div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </aside>
+
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+    <header style="position:sticky;top:0;z-index:30;height:62px;flex:none;display:flex;align-items:center;gap:14px;padding:0 26px;border-bottom:1px solid var(--line);background:oklch(1 0 0 / .82);backdrop-filter:blur(10px)">
+      <div style="font-size:13px;color:var(--muted-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ workspace }} <span style="opacity:.45;padding:0 4px">/</span> <span style="color:var(--ink);font-weight:600">{{ crumb }}</span></div>
+      <div style="flex:1"></div>
+      <div style="display:flex;align-items:center;gap:9px;height:34px;padding:0 11px;border:1px solid var(--line);border-radius:9px;background:var(--muted);color:var(--muted-ink);font-size:12.5px;min-width:210px;cursor:text" style-hover="border-color:var(--ring)">
+        <span style="font-size:13px">⌕</span><span style="flex:1">Search anything</span>
+        <span style="font-size:10.5px;font-weight:600;padding:2px 5px;border-radius:5px;background:white;border:1px solid var(--line)">⌘K</span>
+      </div>
+      <button style="flex:none;position:relative;width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:white;cursor:pointer;font-size:14px;color:var(--muted-ink)" style-hover="border-color:var(--ring);color:var(--brand)">◔<span style="position:absolute;top:6px;right:7px;width:6px;height:6px;border-radius:999px;background:var(--error)"></span></button>
+      <div style="flex:none;width:34px;height:34px;border-radius:10px;background:linear-gradient(120deg,oklch(0.47 0.245 292),oklch(0.82 0.14 70));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white">JD</div>
+    </header>
+
+    <main style="flex:1;padding:30px 26px 56px;max-width:1480px;width:100%">
+      <div style="display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:26px">
+        <div style="flex:1;min-width:280px">
+          <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.16em;color:var(--brand);margin-bottom:9px">{{ eyebrow }}</div>
+          <h1 style="margin:0;font-family:Sora,sans-serif;font-size:30px;font-weight:600;letter-spacing:-0.02em;color:var(--ink);line-height:1.15">{{ title }}</h1>
+          <p style="margin:8px 0 0;font-size:13.5px;color:var(--muted-ink);max-width:70ch;text-wrap:pretty">{{ desc }}</p>
+        </div>
+        <sc-if value="{{ hasAction }}">
+          <button onClick="{{ headerAction }}" style="flex:none;height:38px;padding:0 18px;border:0;border-radius:9px;background:linear-gradient(120deg,oklch(0.47 0.245 292) 0%,oklch(0.7 0.16 292) 52%,oklch(0.82 0.14 70) 100%);color:white;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 8px 22px oklch(0.47 0.245 292 / .28)" style-hover="filter:brightness(1.06)">{{ actionLabel }}</button>
+        </sc-if>
+      </div>
+
+      <!-- ===== LEADERSHIP DASHBOARD ===== -->
+      <sc-if value="{{ isDashboard }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:20px">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:14px">
+            <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="6">
+              <div onClick="{{ k.go }}" style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:17px 18px;cursor:pointer;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease" style-hover="transform:translateY(-2px);border-color:oklch(0.75 0.1 292);box-shadow:0 14px 34px oklch(0.3 0.06 292 / .1)">
+                <div style="font-size:11.5px;font-weight:600;color:var(--muted-ink);letter-spacing:.01em">{{ k.label }}</div>
+                <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-top:9px">
+                  <div>
+                    <div style="font-family:Sora,sans-serif;font-size:27px;font-weight:600;letter-spacing:-0.02em;line-height:1">{{ k.value }}</div>
+                    <div style="font-size:11.5px;font-weight:600;margin-top:7px;color:{{ k.deltaColor }}">{{ k.delta }}</div>
+                  </div>
+                  <svg viewBox="0 0 100 34" preserveAspectRatio="none" style="width:82px;height:34px;overflow:visible">
+                    <polyline points="{{ k.points }}" fill="none" stroke="{{ k.stroke }}" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"></polyline>
+                  </svg>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="border-radius:18px;padding:24px 26px;background:linear-gradient(120deg,oklch(0.47 0.245 292) 0%,oklch(0.7 0.16 292) 52%,oklch(0.82 0.14 70) 100%);color:white;box-shadow:0 18px 44px oklch(0.47 0.245 292 / .3);display:flex;align-items:center;gap:26px;flex-wrap:wrap">
+            <div style="flex:1;min-width:320px">
+              <div style="display:inline-flex;align-items:center;gap:7px;padding:3px 9px;border-radius:7px;background:oklch(1 0 0 / .2);font-size:10.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase">One platform</div>
+              <div style="font-family:Sora,sans-serif;font-size:22px;font-weight:600;line-height:1.35;margin-top:12px;max-width:56ch;text-wrap:pretty">One platform replaced 6 tools — 214 candidates sourced, screened, and interviewed this week, saving ~47 recruiter hours.</div>
+            </div>
+            <div style="display:flex;gap:26px;flex-wrap:wrap">
+              <div><div style="font-family:Sora,sans-serif;font-size:30px;font-weight:700">6→1</div><div style="font-size:11.5px;opacity:.85;margin-top:3px">Tools consolidated</div></div>
+              <div><div style="font-family:Sora,sans-serif;font-size:30px;font-weight:700">47h</div><div style="font-size:11.5px;opacity:.85;margin-top:3px">Hours saved / week</div></div>
+              <div><div style="font-family:Sora,sans-serif;font-size:30px;font-weight:700">214</div><div style="font-size:11.5px;opacity:.85;margin-top:3px">Candidates handled</div></div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px">
+            <div style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:20px">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+                <h3 style="margin:0;font-family:Sora,sans-serif;font-size:15px;font-weight:600">Hiring funnel</h3>
+                <span style="font-size:11.5px;color:var(--muted-ink)">Last 30 days</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:13px;margin-top:18px">
+                <sc-for list="{{ funnel }}" as="f" hint-placeholder-count="5">
+                  <div>
+                    <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:12px;margin-bottom:6px">
+                      <span style="font-weight:600;color:var(--ink)">{{ f.stage }}</span>
+                      <span style="color:var(--muted-ink)">{{ f.meta }}</span>
+                    </div>
+                    <div style="height:12px;border-radius:999px;background:var(--muted);overflow:hidden">
+                      <div style="height:100%;border-radius:999px;width:{{ f.width }};background:{{ f.color }};transition:width .5s ease"></div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:20px">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+                <h3 style="margin:0;font-family:Sora,sans-serif;font-size:15px;font-weight:600">Source effectiveness</h3>
+                <span style="font-size:11.5px;color:var(--muted-ink)">Shortlist rate</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:24px;margin-top:18px;flex-wrap:wrap">
+                <div style="flex:none;width:150px;height:150px;border-radius:999px;background:{{ donut }};display:flex;align-items:center;justify-content:center;position:relative">
+                  <div style="width:96px;height:96px;border-radius:999px;background:white;display:flex;flex-direction:column;align-items:center;justify-content:center">
+                    <div style="font-family:Sora,sans-serif;font-size:20px;font-weight:600">1,284</div>
+                    <div style="font-size:10.5px;color:var(--muted-ink)">sourced</div>
+                  </div>
+                </div>
+                <div style="flex:1;min-width:180px;display:flex;flex-direction:column;gap:11px">
+                  <sc-for list="{{ sources }}" as="s" hint-placeholder-count="4">
+                    <div style="display:flex;align-items:center;gap:10px">
+                      <span style="flex:none;width:9px;height:9px;border-radius:3px;background:{{ s.color }}"></span>
+                      <span style="flex:1;font-size:12.5px;font-weight:500">{{ s.name }}</span>
+                      <span style="font-size:12.5px;color:var(--muted-ink)">{{ s.count }}</span>
+                      <span style="font-size:12px;font-weight:600;width:44px;text-align:right">{{ s.rate }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:20px">
+            <h3 style="margin:0 0 16px;font-family:Sora,sans-serif;font-size:15px;font-weight:600">Per-client performance</h3>
+            <div style="overflow-x:auto">
+              <table style="width:100%;border-collapse:collapse;font-size:12.5px;min-width:660px">
+                <thead>
+                  <tr style="text-align:left;color:var(--muted-ink)">
+                    <th style="padding:0 12px 10px 0;font-weight:600">Client</th>
+                    <th style="padding:0 12px 10px;font-weight:600">Hiring manager</th>
+                    <th style="padding:0 12px 10px;font-weight:600">Open roles</th>
+                    <th style="padding:0 12px 10px;font-weight:600">AI-screened</th>
+                    <th style="padding:0 12px 10px;font-weight:600">Shortlisted</th>
+                    <th style="padding:0 0 10px 12px;font-weight:600">Time to shortlist</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <sc-for list="{{ clients }}" as="c" hint-placeholder-count="5">
+                    <tr style="border-top:1px solid var(--line);cursor:pointer" style-hover="background:oklch(0.97 0.015 292)">
+                      <td style="padding:12px 12px 12px 0;font-weight:600">{{ c.name }}</td>
+                      <td style="padding:12px;color:var(--muted-ink)">{{ c.manager }}</td>
+                      <td style="padding:12px">{{ c.roles }}</td>
+                      <td style="padding:12px">{{ c.screened }}</td>
+                      <td style="padding:12px">{{ c.shortlisted }}</td>
+                      <td style="padding:12px 0 12px 12px"><span style="display:inline-flex;align-items:center;border-radius:6px;border:1px solid {{ c.pillBorder }};background:{{ c.pillBg }};color:{{ c.pillFg }};padding:2px 8px;font-size:11.5px;font-weight:600">{{ c.tts }}</span></td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===== CANDIDATE INTELLIGENCE ===== -->
+      <sc-if value="{{ isCandidate }}">
+        <div style="display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,1fr);gap:16px;align-items:start">
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:22px;display:flex;gap:22px;align-items:center;flex-wrap:wrap">
+              <div style="flex:none;width:104px;height:104px;border-radius:999px;background:{{ ringBg }};display:flex;align-items:center;justify-content:center">
+                <div style="width:82px;height:82px;border-radius:999px;background:white;display:flex;flex-direction:column;align-items:center;justify-content:center">
+                  <div style="font-family:Sora,sans-serif;font-size:24px;font-weight:700;color:{{ scoreColor }}">{{ candidate.score }}</div>
+                  <div style="font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-ink)">match</div>
+                </div>
+              </div>
+              <div style="flex:1;min-width:240px">
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                  <h2 style="margin:0;font-family:Sora,sans-serif;font-size:23px;font-weight:600;letter-spacing:-0.02em">{{ candidate.name }}</h2>
+                  <span style="display:inline-flex;align-items:center;border-radius:6px;border:1px solid {{ bandBorder }};background:{{ bandBg }};color:{{ bandFg }};padding:2px 9px;font-size:11.5px;font-weight:700">{{ candidate.band }}</span>
+                </div>
+                <div style="font-size:13px;color:var(--muted-ink);margin-top:6px">{{ candidate.role }} · {{ candidate.location }} · {{ candidate.experience }}</div>
+                <div style="display:inline-flex;align-items:center;gap:8px;margin-top:13px;padding:7px 12px;border-radius:9px;background:var(--brand-soft);border:1px solid oklch(0.88 0.05 292);color:var(--brand)">
+                  <span style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:2px 6px;border-radius:5px;background:var(--brand);color:white">AI</span>
+                  <span style="font-size:12.5px;font-weight:600">{{ candidate.recommendation }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div style="border:1px solid oklch(0.88 0.05 292);background:linear-gradient(180deg,var(--brand-soft),white);box-shadow:var(--card-sh);border-radius:16px;padding:20px">
+              <div style="display:flex;align-items:center;gap:9px;margin-bottom:14px">
+                <span style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:2px 7px;border-radius:5px;background:var(--brand);color:white">AI insight</span>
+                <span style="font-size:11.5px;color:var(--muted-ink)">Generated from CV, screening replies and interview transcript</span>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px">
+                <div>
+                  <div style="font-size:12px;font-weight:700;color:var(--success);margin-bottom:9px">Strengths</div>
+                  <ul style="margin:0;padding-left:17px;display:flex;flex-direction:column;gap:7px;font-size:12.5px;line-height:1.5;color:var(--ink)">
+                    <sc-for list="{{ candidate.strengths }}" as="s" hint-placeholder-count="3"><li>{{ s }}</li></sc-for>
+                  </ul>
+                </div>
+                <div>
+                  <div style="font-size:12px;font-weight:700;color:var(--warning);margin-bottom:9px">Gaps to verify</div>
+                  <ul style="margin:0;padding-left:17px;display:flex;flex-direction:column;gap:7px;font-size:12.5px;line-height:1.5;color:var(--ink)">
+                    <sc-for list="{{ candidate.gaps }}" as="g" hint-placeholder-count="3"><li>{{ g }}</li></sc-for>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:20px">
+              <h3 style="margin:0 0 15px;font-family:Sora,sans-serif;font-size:15px;font-weight:600">AI video interview</h3>
+              <div style="display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:20px;align-items:center">
+                <div style="display:flex;flex-direction:column;gap:13px">
+                  <sc-for list="{{ candidate.competencies }}" as="c" hint-placeholder-count="3">
+                    <div>
+                      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="font-weight:600">{{ c.name }}</span><span style="color:var(--muted-ink)">{{ c.score }}/10</span></div>
+                      <div style="height:8px;border-radius:999px;background:var(--muted);overflow:hidden"><div style="height:100%;width:{{ c.width }};border-radius:999px;background:{{ c.color }}"></div></div>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="height:118px;border-radius:12px;background:repeating-linear-gradient(135deg,oklch(0.94 0.02 292) 0 8px,oklch(0.97 0.015 292) 8px 16px);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer" style-hover="border-color:var(--ring)">
+                  <div style="width:36px;height:36px;border-radius:999px;background:var(--brand);color:white;display:flex;align-items:center;justify-content:center;font-size:13px">▶</div>
+                  <div style="font-family:ui-monospace,monospace;font-size:10.5px;color:var(--muted-ink)">watch · 12:04</div>
+                </div>
+              </div>
+            </div>
+
+            <div style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:20px">
+              <h3 style="margin:0 0 14px;font-family:Sora,sans-serif;font-size:15px;font-weight:600">Skills</h3>
+              <div style="display:flex;flex-wrap:wrap;gap:8px">
+                <sc-for list="{{ candidate.skills }}" as="s" hint-placeholder-count="8">
+                  <span style="display:inline-flex;align-items:center;border-radius:7px;border:1px solid {{ s.border }};background:{{ s.bg }};color:{{ s.fg }};padding:4px 10px;font-size:12px;font-weight:{{ s.weight }}">{{ s.name }}</span>
+                </sc-for>
+              </div>
+              <div style="height:1px;background:var(--line);margin:20px 0"></div>
+              <h3 style="margin:0 0 14px;font-family:Sora,sans-serif;font-size:15px;font-weight:600">Experience</h3>
+              <div style="display:flex;flex-direction:column;gap:15px">
+                <sc-for list="{{ candidate.jobs }}" as="j" hint-placeholder-count="3">
+                  <div style="display:flex;gap:13px">
+                    <div style="flex:none;width:9px;height:9px;border-radius:999px;background:var(--brand);margin-top:5px"></div>
+                    <div>
+                      <div style="font-size:13px;font-weight:600">{{ j.title }} · {{ j.company }}</div>
+                      <div style="font-size:11.5px;color:var(--muted-ink);margin-top:2px">{{ j.dates }}</div>
+                      <div style="font-size:12.5px;color:var(--ink);margin-top:5px;line-height:1.5">{{ j.note }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="height:1px;background:var(--line);margin:20px 0"></div>
+              <h3 style="margin:0 0 10px;font-family:Sora,sans-serif;font-size:15px;font-weight:600">Education</h3>
+              <div style="font-size:12.5px;color:var(--ink)">{{ candidate.education }}</div>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:16px;position:sticky;top:86px">
+            <div style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:20px">
+              <h3 style="margin:0 0 4px;font-family:Sora,sans-serif;font-size:15px;font-weight:600">Human decision</h3>
+              <p style="margin:0 0 15px;font-size:11.5px;color:var(--muted-ink)">AI ranked this candidate. You decide.</p>
+              <div style="display:flex;flex-direction:column;gap:9px">
+                <button onClick="{{ decideShortlist }}" style="height:38px;border:0;border-radius:9px;background:linear-gradient(120deg,oklch(0.47 0.245 292) 0%,oklch(0.7 0.16 292) 52%,oklch(0.82 0.14 70) 100%);color:white;font-size:13px;font-weight:600;cursor:pointer" style-hover="filter:brightness(1.06)">Shortlist candidate</button>
+                <button onClick="{{ decideInterview }}" style="height:38px;border:1px solid var(--line);border-radius:9px;background:white;color:var(--ink);font-size:13px;font-weight:600;cursor:pointer" style-hover="background:var(--muted);border-color:var(--ring)">Request human interview</button>
+                <button onClick="{{ decideReject }}" style="height:38px;border:1px solid oklch(0.9 0.06 25);border-radius:9px;background:white;color:var(--error);font-size:13px;font-weight:600;cursor:pointer" style-hover="background:oklch(0.97 0.03 25)">Reject</button>
+              </div>
+              <sc-if value="{{ decision }}">
+                <div style="margin-top:13px;padding:10px 12px;border-radius:9px;background:oklch(0.58 0.18 145 / .1);color:var(--success);font-size:12px;font-weight:600">{{ decision }}</div>
+              </sc-if>
+            </div>
+
+            <div style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:20px">
+              <div style="display:flex;align-items:center;gap:9px;margin-bottom:14px">
+                <span style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:2px 7px;border-radius:5px;background:var(--brand-soft);color:var(--brand)">AI screening</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <sc-for list="{{ candidate.screening }}" as="q" hint-placeholder-count="4">
+                  <div>
+                    <div style="font-size:11.5px;color:var(--muted-ink)">{{ q.q }}</div>
+                    <div style="font-size:13px;font-weight:600;margin-top:3px">{{ q.a }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===== INBOX ===== -->
+      <sc-if value="{{ isInbox }}">
+        <div style="border:1px solid var(--line);background:white;box-shadow:var(--card-sh);border-radius:16px;overflow:hidden;display:grid;grid-template-columns:minmax(260px,320px) minmax(0,1fr);min-height:600px">
+          <div style="border-right:1px solid var(--line);display:flex;flex-direction:column;background:oklch(0.99 0.008 292)">
+            <div style="padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between">
+              <div style="font-size:12.5px;font-weight:700">Conversations</div>
+              <div style="font-size:11.5px;color:var(--muted-ink)">4 unread</div>
+            </div>
+            <sc-for list="{{ convs }}" as="c" hint-placeholder-count="5">
+              <button onClick="{{ c.pick }}" style="text-align:left;border:0;border-bottom:1px solid var(--line);border-left:3px solid {{ c.activeBar }};background:{{ c.bg }};padding:13px 15px;cursor:pointer;display:flex;flex-direction:column;gap:6px" style-hover="background:oklch(0.97 0.015 292)">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span style="flex:1;font-size:13px;font-weight:600;color:var(--ink)">{{ c.name }}</span>
+                  <sc-if value="{{ c.unread }}"><span style="flex:none;width:7px;height:7px;border-radius:999px;background:var(--brand)"></span></sc-if>
+                  <span style="flex:none;font-size:10.5px;color:var(--muted-ink)">{{ c.time }}</span>
+                </div>
+                <div style="font-size:11.5px;color:var(--muted-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ c.preview }}</div>
+                <div style="display:flex;align-items:center;gap:6px">
+                  <span style="display:inline-flex;align-items:center;gap:4px;border-radius:6px;background:{{ c.chanBg }};color:{{ c.chanFg }};padding:2px 7px;font-size:10.5px;font-weight:600;white-space:nowrap">{{ c.chanIcon }} {{ c.channel }}</span>
+                  <span style="display:inline-flex;border-radius:6px;background:{{ c.handlerBg }};color:{{ c.handlerFg }};padding:2px 7px;font-size:10.5px;font-weight:700;white-space:nowrap">{{ c.handler }}</span>
+                </div>
+              </button>
+            </sc-for>
+          </div>
+
+          <div style="display:flex;flex-direction:column;min-width:0">
+            <div style="padding:14px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+              <div style="flex:1;min-width:160px">
+                <div style="font-size:14px;font-weight:600;font-family:Sora,sans-serif">{{ thread.name }}</div>
+                <div style="font-size:11.5px;color:var(--muted-ink);margin-top:2px">{{ thread.sub }}</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="font-size:12px;font-weight:600;color:{{ botLabelColor }}">Bot</span>
+                <button onClick="{{ toggleBot }}" role="switch" style="position:relative;width:44px;height:24px;border-radius:999px;border:0;cursor:pointer;background:{{ botTrack }};transition:background .18s">
+                  <span style="position:absolute;top:3px;left:{{ botKnob }};width:18px;height:18px;border-radius:999px;background:white;box-shadow:0 2px 6px oklch(0.3 0.06 292 / .3);transition:left .18s"></span>
+                </button>
+                <span style="font-size:12px;font-weight:600;color:{{ humanLabelColor }}">Human</span>
+              </div>
+            </div>
+            <sc-if value="{{ thread.escalated }}">
+              <div style="padding:11px 20px;background:oklch(0.67 0.17 65 / .12);color:oklch(0.45 0.13 65);font-size:12px;font-weight:600;border-bottom:1px solid var(--line)">⚑ Escalated to you — candidate asked about visa sponsorship, outside the AI's script.</div>
+            </sc-if>
+            <div style="flex:1;padding:22px 20px;display:flex;flex-direction:column;gap:14px;background:oklch(0.99 0.008 292)">
+              <sc-for list="{{ thread.messages }}" as="m" hint-placeholder-count="6">
+                <div style="display:flex;flex-direction:column;align-items:{{ m.align }};gap:5px">
+                  <div style="max-width:74%;padding:11px 14px;border-radius:{{ m.radius }};background:{{ m.bg }};color:{{ m.fg }};font-size:13px;line-height:1.55;border:1px solid {{ m.border }}">{{ m.text }}</div>
+                  <sc-if value="{{ m.chips }}">
+                    <div style="display:flex;gap:7px;flex-wrap:wrap">
+                      <sc-for list="{{ m.chips }}" as="ch" hint-placeholder-count="3">
+                        <span style="border:1px solid oklch(0.88 0.05 292);background:white;color:var(--brand);border-radius:999px;padding:4px 11px;font-size:11.5px;font-weight:600">{{ ch }}</span>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+                  <div style="font-size:10.5px;color:var(--muted-ink)">{{ m.meta }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="padding:14px 20px;border-top:1px solid var(--line);display:flex;gap:10px;align-items:center">
+              <div style="flex:1;height:38px;border:1px solid var(--line);border-radius:9px;background:white;display:flex;align-items:center;padding:0 12px;font-size:12.5px;color:var(--muted-ink)">{{ composerHint }}</div>
+              <button style="height:38px;padding:0 16px;border:0;border-radius:9px;background:var(--brand);color:white;font-size:12.5px;font-weight:600;cursor:pointer" style-hover="filter:brightness(1.08)">Send</button>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===== AUTOMATIONS ===== -->
+      <sc-if value="{{ isAutomations }}">
+        <div style="display:flex;flex-direction:column;gap:26px">
+          <div>
+            <h3 style="margin:0 0 4px;font-family:Sora,sans-serif;font-size:16px;font-weight:600">Inbound sources</h3>
+            <p style="margin:0 0 15px;font-size:12.5px;color:var(--muted-ink)">Connectors that feed candidates into the pipeline automatically.</p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px">
+              <sc-for list="{{ inbound }}" as="a" hint-placeholder-count="3">
+                <div style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:18px">
+                  <div style="display:flex;align-items:flex-start;gap:12px">
+                    <div style="flex:none;width:34px;height:34px;border-radius:10px;background:var(--brand-soft);color:var(--brand);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700">{{ a.icon }}</div>
+                    <div style="flex:1;min-width:0">
+                      <div style="font-size:13.5px;font-weight:600">{{ a.name }}</div>
+                      <div style="font-size:11.5px;color:var(--muted-ink);margin-top:2px">{{ a.sub }}</div>
+                    </div>
+                    <button onClick="{{ a.toggle }}" role="switch" style="flex:none;position:relative;width:42px;height:23px;border-radius:999px;border:0;cursor:pointer;background:{{ a.track }};transition:background .18s">
+                      <span style="position:absolute;top:3px;left:{{ a.knob }};width:17px;height:17px;border-radius:999px;background:white;box-shadow:0 2px 6px oklch(0.3 0.06 292 / .3);transition:left .18s"></span>
+                    </button>
+                  </div>
+                  <div style="display:flex;gap:18px;margin-top:16px">
+                    <div><div style="font-family:Sora,sans-serif;font-size:19px;font-weight:600">{{ a.count }}</div><div style="font-size:10.5px;color:var(--muted-ink)">this week</div></div>
+                    <div><div style="font-family:Sora,sans-serif;font-size:19px;font-weight:600">{{ a.rate }}</div><div style="font-size:10.5px;color:var(--muted-ink)">pass screening</div></div>
+                  </div>
+                  <div style="margin-top:14px;font-size:11.5px;font-weight:600;color:{{ a.stateFg }}">{{ a.stateLabel }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div>
+            <h3 style="margin:0 0 4px;font-family:Sora,sans-serif;font-size:16px;font-weight:600">Outbound sequences</h3>
+            <p style="margin:0 0 15px;font-size:12.5px;color:var(--muted-ink)">Screening and follow-up flows over email and WhatsApp.</p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px">
+              <sc-for list="{{ outbound }}" as="o" hint-placeholder-count="3">
+                <div style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:18px">
+                  <div style="display:flex;align-items:center;gap:12px">
+                    <div style="flex:1;min-width:0">
+                      <div style="font-size:13.5px;font-weight:600">{{ o.name }}</div>
+                      <div style="font-size:11.5px;color:var(--muted-ink);margin-top:2px">{{ o.channel }}</div>
+                    </div>
+                    <button onClick="{{ o.toggle }}" role="switch" style="flex:none;position:relative;width:42px;height:23px;border-radius:999px;border:0;cursor:pointer;background:{{ o.track }};transition:background .18s">
+                      <span style="position:absolute;top:3px;left:{{ o.knob }};width:17px;height:17px;border-radius:999px;background:white;box-shadow:0 2px 6px oklch(0.3 0.06 292 / .3);transition:left .18s"></span>
+                    </button>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:7px;margin-top:16px;flex-wrap:wrap">
+                    <sc-for list="{{ o.steps }}" as="st" hint-placeholder-count="3">
+                      <span style="border:1px solid var(--line);background:white;border-radius:8px;padding:5px 9px;font-size:11px;font-weight:600;color:var(--ink)">{{ st }}</span>
+                    </sc-for>
+                  </div>
+                  <div style="margin-top:15px;font-size:12px;color:var(--muted-ink)">{{ o.stats }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===== MANAGER DASHBOARD ===== -->
+      <sc-if value="{{ isManager }}">
+        <div style="display:flex;flex-direction:column;gap:20px">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px">
+            <sc-for list="{{ managerCards }}" as="m" hint-placeholder-count="4">
+              <div style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:18px;cursor:pointer;transition:transform .16s,border-color .16s" style-hover="transform:translateY(-2px);border-color:oklch(0.75 0.1 292)">
+                <div style="font-size:11.5px;font-weight:600;color:var(--muted-ink)">{{ m.label }}</div>
+                <div style="font-family:Sora,sans-serif;font-size:28px;font-weight:600;margin-top:9px;letter-spacing:-0.02em">{{ m.value }}</div>
+                <div style="font-size:11.5px;color:{{ m.noteColor }};font-weight:600;margin-top:6px">{{ m.note }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:20px">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:16px">
+              <h3 style="margin:0;font-family:Sora,sans-serif;font-size:15px;font-weight:600">Needs your decision</h3>
+              <span style="font-size:11.5px;color:var(--muted-ink)">Ranked by AI match score</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <sc-for list="{{ queue }}" as="q" hint-placeholder-count="4">
+                <div style="border:1px solid var(--line);background:white;border-radius:13px;padding:14px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap" style-hover="border-color:oklch(0.75 0.1 292)">
+                  <div style="flex:none;width:40px;height:40px;border-radius:11px;background:var(--brand-soft);color:var(--brand);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700">{{ q.initials }}</div>
+                  <div style="flex:1;min-width:170px">
+                    <div onClick="{{ q.open }}" style="font-size:13.5px;font-weight:600;cursor:pointer;color:var(--ink)">{{ q.name }}</div>
+                    <div style="font-size:11.5px;color:var(--muted-ink);margin-top:2px">{{ q.role }} · {{ q.note }}</div>
+                  </div>
+                  <span style="flex:none;display:inline-flex;border-radius:7px;border:1px solid {{ q.border }};background:{{ q.bg }};color:{{ q.fg }};padding:3px 10px;font-size:12px;font-weight:700">{{ q.score }} {{ q.band }}</span>
+                  <div style="flex:none;display:flex;gap:8px">
+                    <button onClick="{{ q.open }}" style="height:32px;padding:0 12px;border:1px solid var(--line);border-radius:8px;background:white;font-size:12px;font-weight:600;cursor:pointer;color:var(--ink)" style-hover="background:var(--muted)">Review</button>
+                    <button style="height:32px;padding:0 12px;border:0;border-radius:8px;background:var(--brand);color:white;font-size:12px;font-weight:600;cursor:pointer" style-hover="filter:brightness(1.08)">Shortlist</button>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===== JOBS ===== -->
+      <sc-if value="{{ isJobs }}">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px">
+          <sc-for list="{{ jobs }}" as="j" hint-placeholder-count="6">
+            <div onClick="{{ j.open }}" style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:19px;cursor:pointer;transition:transform .16s,border-color .16s,box-shadow .16s" style-hover="transform:translateY(-2px);border-color:oklch(0.75 0.1 292);box-shadow:0 14px 34px oklch(0.3 0.06 292 / .1)">
+              <div style="display:flex;align-items:flex-start;gap:12px">
+                <div style="flex:1;min-width:0">
+                  <div style="font-family:Sora,sans-serif;font-size:15.5px;font-weight:600;letter-spacing:-0.01em">{{ j.title }}</div>
+                  <div style="font-size:11.5px;color:var(--muted-ink);margin-top:4px">{{ j.location }} · {{ j.mode }} · {{ j.type }}</div>
+                </div>
+                <span style="flex:none;display:inline-flex;border-radius:6px;border:1px solid {{ j.statusBorder }};background:{{ j.statusBg }};color:{{ j.statusFg }};padding:2px 9px;font-size:11px;font-weight:700">{{ j.status }}</span>
+              </div>
+              <div style="display:flex;gap:20px;margin-top:17px;flex-wrap:wrap">
+                <div><div style="font-family:Sora,sans-serif;font-size:19px;font-weight:600">{{ j.applicants }}</div><div style="font-size:10.5px;color:var(--muted-ink);white-space:nowrap">applicants</div></div>
+                <div><div style="font-family:Sora,sans-serif;font-size:19px;font-weight:600;color:var(--brand)">{{ j.screened }}</div><div style="font-size:10.5px;color:var(--muted-ink);white-space:nowrap">AI-screened</div></div>
+                <div><div style="font-family:Sora,sans-serif;font-size:19px;font-weight:600">{{ j.shortlisted }}</div><div style="font-size:10.5px;color:var(--muted-ink);white-space:nowrap">shortlisted</div></div>
+              </div>
+              <div style="margin-top:16px">
+                <div style="display:flex;height:6px;border-radius:999px;overflow:hidden;background:var(--muted)">
+                  <sc-for list="{{ j.mix }}" as="m" hint-placeholder-count="3">
+                    <span style="height:100%;width:{{ m.width }};background:{{ m.color }}"></span>
+                  </sc-for>
+                </div>
+                <div style="font-size:10.5px;color:var(--muted-ink);margin-top:7px">{{ j.mixLabel }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <!-- ===== CREATE JOB ===== -->
+      <sc-if value="{{ isNewJob }}">
+        <div style="display:grid;grid-template-columns:minmax(0,1.4fr) minmax(260px,1fr);gap:16px;align-items:start">
+          <div style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:17px">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px">
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;font-weight:600">Job title</span><input value="Senior Backend Engineer" style="height:38px;border:1px solid var(--line);border-radius:9px;padding:0 11px;font-size:13px;background:white;color:var(--ink)" /></label>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;font-weight:600">Department</span><input value="Engineering" style="height:38px;border:1px solid var(--line);border-radius:9px;padding:0 11px;font-size:13px;background:white;color:var(--ink)" /></label>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;font-weight:600">Location</span><input value="Dubai, UAE" style="height:38px;border:1px solid var(--line);border-radius:9px;padding:0 11px;font-size:13px;background:white;color:var(--ink)" /></label>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;font-weight:600">Employment type</span>
+                <select style="height:38px;border:1px solid var(--line);border-radius:9px;padding:0 9px;font-size:13px;background:white;color:var(--ink)"><option>Full-time</option><option>Contract</option><option>Part-time</option></select>
+              </label>
+            </div>
+            <div style="border:1px solid oklch(0.88 0.05 292);background:linear-gradient(180deg,var(--brand-soft),white);border-radius:13px;padding:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+              <div style="flex:1;min-width:220px">
+                <div style="display:flex;align-items:center;gap:8px"><span style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:2px 7px;border-radius:5px;background:var(--brand);color:white">AI</span><span style="font-size:13px;font-weight:600">Let AI help you write this description</span></div>
+                <div style="font-size:11.5px;color:var(--muted-ink);margin-top:5px">Uses the title, department and skills you've added.</div>
+              </div>
+              <button onClick="{{ generateJd }}" style="height:36px;padding:0 16px;border:0;border-radius:9px;background:var(--brand);color:white;font-size:12.5px;font-weight:600;cursor:pointer" style-hover="filter:brightness(1.08)">{{ jdButton }}</button>
+            </div>
+            <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;font-weight:600">Job description</span>
+              <textarea value="{{ jd }}" onChange="{{ onJd }}" rows="8" style="border:1px solid var(--line);border-radius:9px;padding:11px;font-size:13px;line-height:1.6;background:white;color:var(--ink);resize:vertical"></textarea>
+            </label>
+            <div>
+              <div style="font-size:12px;font-weight:600;margin-bottom:9px">Skills &amp; importance</div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px">
+                <sc-for list="{{ jobSkills }}" as="s" hint-placeholder-count="7">
+                  <button onClick="{{ s.cycle }}" style="display:inline-flex;align-items:center;gap:7px;border:1px solid {{ s.border }};background:{{ s.bg }};color:{{ s.fg }};border-radius:8px;padding:5px 11px;font-size:12px;font-weight:600;cursor:pointer">{{ s.name }} <span style="font-size:10px;opacity:.8;font-weight:700">{{ s.level }}</span></button>
+                </sc-for>
+              </div>
+              <div style="font-size:11px;color:var(--muted-ink);margin-top:9px">Click a skill to cycle Must-have → Important → Nice-to-have.</div>
+            </div>
+            <div style="display:flex;gap:10px;padding-top:4px">
+              <button onClick="{{ goJobs }}" style="height:38px;padding:0 18px;border:0;border-radius:9px;background:linear-gradient(120deg,oklch(0.47 0.245 292) 0%,oklch(0.7 0.16 292) 52%,oklch(0.82 0.14 70) 100%);color:white;font-size:13px;font-weight:600;cursor:pointer">Create job</button>
+              <button onClick="{{ goJobs }}" style="height:38px;padding:0 16px;border:1px solid var(--line);border-radius:9px;background:white;font-size:13px;font-weight:600;cursor:pointer;color:var(--ink)" style-hover="background:var(--muted)">Cancel</button>
+            </div>
+          </div>
+          <div style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:20px">
+            <h3 style="margin:0 0 12px;font-family:Sora,sans-serif;font-size:15px;font-weight:600">What happens next</h3>
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <sc-for list="{{ nextSteps }}" as="n" hint-placeholder-count="4">
+                <div style="display:flex;gap:11px">
+                  <div style="flex:none;width:22px;height:22px;border-radius:999px;background:var(--brand-soft);color:var(--brand);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center">{{ n.i }}</div>
+                  <div style="font-size:12.5px;line-height:1.5;color:var(--ink)">{{ n.text }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===== REVIEW DESK ===== -->
+      <sc-if value="{{ isReview }}">
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:20px">
+            <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+              <div style="flex:1;min-width:240px">
+                <div style="font-size:12.5px;font-weight:600">Shortlist cutoff — match score {{ cutoff }}+</div>
+                <input type="range" min="40" max="95" value="{{ cutoff }}" onChange="{{ onCutoff }}" onInput="{{ onCutoff }}" style="width:100%;margin-top:12px;accent-color:oklch(0.47 0.245 292)" />
+              </div>
+              <div style="display:flex;gap:22px">
+                <div><div style="font-family:Sora,sans-serif;font-size:22px;font-weight:600;color:var(--success)">{{ aboveCount }}</div><div style="font-size:11px;color:var(--muted-ink)">above cutoff</div></div>
+                <div><div style="font-family:Sora,sans-serif;font-size:22px;font-weight:600;color:var(--muted-ink)">{{ belowCount }}</div><div style="font-size:11px;color:var(--muted-ink)">below</div></div>
+              </div>
+              <div style="display:flex;gap:9px">
+                <button style="height:36px;padding:0 15px;border:0;border-radius:9px;background:var(--brand);color:white;font-size:12.5px;font-weight:600;cursor:pointer" style-hover="filter:brightness(1.08)">Shortlist selected</button>
+                <button style="height:36px;padding:0 15px;border:1px solid var(--line);border-radius:9px;background:white;font-size:12.5px;font-weight:600;cursor:pointer;color:var(--ink)" style-hover="background:var(--muted)">Download shortlist</button>
+              </div>
+            </div>
+          </div>
+          <div style="border:1px solid var(--line);background:white;box-shadow:var(--card-sh);border-radius:16px;overflow:hidden">
+            <sc-for list="{{ ranked }}" as="r" hint-placeholder-count="8">
+              <div onClick="{{ r.open }}" style="display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid var(--line);border-left:3px solid {{ r.bar }};background:{{ r.rowBg }};opacity:{{ r.opacity }};cursor:pointer;flex-wrap:wrap" style-hover="background:oklch(0.97 0.015 292)">
+                <div style="flex:none;width:26px;font-family:Sora,sans-serif;font-size:13px;font-weight:600;color:var(--muted-ink)">{{ r.rank }}</div>
+                <div style="flex:1;min-width:180px">
+                  <div style="font-size:13.5px;font-weight:600">{{ r.name }}</div>
+                  <div style="font-size:11.5px;color:var(--muted-ink);margin-top:2px">{{ r.role }}</div>
+                </div>
+                <div style="flex:1;min-width:200px;display:flex;gap:6px;flex-wrap:wrap">
+                  <sc-for list="{{ r.skills }}" as="s" hint-placeholder-count="3">
+                    <span style="border:1px solid var(--line);background:var(--muted);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:500;color:var(--ink)">{{ s }}</span>
+                  </sc-for>
+                </div>
+                <span style="flex:none;display:inline-flex;border-radius:7px;border:1px solid {{ r.border }};background:{{ r.bg }};color:{{ r.fg }};padding:3px 10px;font-size:12px;font-weight:700">{{ r.score }} · {{ r.band }}</span>
+                <span style="flex:none;font-size:11.5px;font-weight:600;color:{{ r.stateFg }};width:86px;text-align:right">{{ r.state }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===== SETTINGS ===== -->
+      <sc-if value="{{ isSettings }}">
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div style="display:inline-flex;gap:4px;padding:4px;border-radius:11px;background:var(--muted);border:1px solid var(--line);width:fit-content">
+            <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="2">
+              <button onClick="{{ t.pick }}" style="height:32px;padding:0 16px;border:0;border-radius:8px;background:{{ t.bg }};color:{{ t.fg }};font-size:12.5px;font-weight:600;cursor:pointer;box-shadow:{{ t.shadow }}">{{ t.label }}</button>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:minmax(0,1.2fr) minmax(280px,1fr);gap:16px;align-items:start">
+            <div style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:16px">
+              <div style="display:flex;align-items:center;gap:11px;flex-wrap:wrap">
+                <h3 style="margin:0;font-family:Sora,sans-serif;font-size:15px;font-weight:600">{{ tplTitle }}</h3>
+                <sc-if value="{{ isWhatsapp }}">
+                  <span style="display:inline-flex;border-radius:6px;border:1px solid oklch(0.88 0.06 65);background:oklch(0.67 0.17 65 / .12);color:oklch(0.45 0.13 65);padding:2px 9px;font-size:11px;font-weight:700">Submitted for approval</span>
+                </sc-if>
+              </div>
+              <sc-if value="{{ isEmail }}">
+                <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;font-weight:600">Subject</span><input value="{{ subject }}" onChange="{{ onSubject }}" style="height:38px;border:1px solid var(--line);border-radius:9px;padding:0 11px;font-size:13px;background:white;color:var(--ink)" /></label>
+              </sc-if>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;font-weight:600">Message body</span>
+                <textarea value="{{ body }}" onChange="{{ onBody }}" rows="9" style="border:1px solid var(--line);border-radius:9px;padding:11px;font-size:13px;line-height:1.65;background:white;color:var(--ink);resize:vertical"></textarea>
+              </label>
+              <div>
+                <div style="font-size:12px;font-weight:600;margin-bottom:9px">Insert placeholder</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap">
+                  <sc-for list="{{ placeholders }}" as="p" hint-placeholder-count="4">
+                    <button onClick="{{ p.insert }}" style="border:1px solid oklch(0.88 0.05 292);background:var(--brand-soft);color:var(--brand);border-radius:7px;padding:5px 10px;font-size:11.5px;font-weight:600;font-family:ui-monospace,monospace;cursor:pointer" style-hover="filter:brightness(0.98)">{{ p.token }}</button>
+                  </sc-for>
+                </div>
+              </div>
+              <sc-if value="{{ isWhatsapp }}">
+                <div style="font-size:11.5px;color:var(--muted-ink);background:var(--muted);border:1px solid var(--line);border-radius:9px;padding:11px 13px">WhatsApp messages need Meta approval before sending. Approval usually takes 1–2 business days.</div>
+              </sc-if>
+            </div>
+            <div style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:20px">
+              <h3 style="margin:0 0 13px;font-family:Sora,sans-serif;font-size:15px;font-weight:600">Live preview</h3>
+              <div style="border:1px solid var(--line);border-radius:12px;background:white;padding:16px">
+                <sc-if value="{{ isEmail }}">
+                  <div style="font-size:13px;font-weight:600;padding-bottom:11px;border-bottom:1px solid var(--line);margin-bottom:12px">{{ previewSubject }}</div>
+                </sc-if>
+                <div style="font-size:12.5px;line-height:1.7;white-space:pre-wrap;color:var(--ink)">{{ previewBody }}</div>
+              </div>
+              <div style="font-size:11px;color:var(--muted-ink);margin-top:11px">Filled with sample data for Priya Raman · Senior Backend Engineer.</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===== ORGANIZATIONS ===== -->
+      <sc-if value="{{ isOrgs }}">
+        <div style="border:1px solid var(--line);background:white;box-shadow:var(--card-sh);border-radius:16px;overflow:hidden">
+          <sc-for list="{{ orgs }}" as="o" hint-placeholder-count="5">
+            <div style="display:flex;align-items:center;gap:16px;padding:16px 20px;border-bottom:1px solid var(--line);flex-wrap:wrap" style-hover="background:oklch(0.98 0.012 292)">
+              <div style="flex:none;width:38px;height:38px;border-radius:11px;background:var(--brand-soft);color:var(--brand);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700">{{ o.initial }}</div>
+              <div style="flex:1;min-width:180px">
+                <div style="font-size:13.5px;font-weight:600">{{ o.name }}</div>
+                <div style="font-size:11.5px;color:var(--muted-ink);margin-top:2px">{{ o.plan }} · {{ o.users }} users · {{ o.roles }} active roles</div>
+              </div>
+              <span style="flex:none;display:inline-flex;border-radius:6px;border:1px solid {{ o.border }};background:{{ o.bg }};color:{{ o.fg }};padding:2px 9px;font-size:11px;font-weight:700">{{ o.activity }}</span>
+              <div style="flex:none;display:flex;gap:8px">
+                <button style="height:32px;padding:0 12px;border:1px solid var(--line);border-radius:8px;background:white;font-size:12px;font-weight:600;cursor:pointer;color:var(--ink)" style-hover="background:var(--muted)">Invite</button>
+                <button onClick="{{ o.open }}" style="height:32px;padding:0 12px;border:0;border-radius:8px;background:var(--brand);color:white;font-size:12px;font-weight:600;cursor:pointer" style-hover="filter:brightness(1.08)">Open workspace</button>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <!-- ===== CANDIDATES LIST ===== -->
+      <sc-if value="{{ isCandidates }}">
+        <div style="border:1px solid var(--line);background:white;box-shadow:var(--card-sh);border-radius:16px;overflow:hidden">
+          <div style="display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--line);background:oklch(0.99 0.008 292);font-size:11.5px;font-weight:600;color:var(--muted-ink)">
+            <span style="flex:1;min-width:170px">Candidate</span><span style="flex:1;min-width:150px">Role</span><span style="flex:none;width:110px">Stage</span><span style="flex:none;width:96px;text-align:right">Match</span>
+          </div>
+          <sc-for list="{{ ranked }}" as="r" hint-placeholder-count="8">
+            <div onClick="{{ r.open }}" style="display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--line);cursor:pointer;flex-wrap:wrap" style-hover="background:oklch(0.97 0.015 292)">
+              <div style="flex:1;min-width:170px;display:flex;align-items:center;gap:11px">
+                <div style="flex:none;width:32px;height:32px;border-radius:9px;background:var(--brand-soft);color:var(--brand);display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700">{{ r.initials }}</div>
+                <span style="font-size:13.5px;font-weight:600">{{ r.name }}</span>
+              </div>
+              <span style="flex:1;min-width:150px;font-size:12.5px;color:var(--muted-ink)">{{ r.role }}</span>
+              <span style="flex:none;width:110px;font-size:11.5px;font-weight:600;color:var(--brand)">{{ r.stage }}</span>
+              <span style="flex:none;width:96px;text-align:right"><span style="display:inline-flex;border-radius:7px;border:1px solid {{ r.border }};background:{{ r.bg }};color:{{ r.fg }};padding:3px 9px;font-size:12px;font-weight:700">{{ r.score }}</span></span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+    </main>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900},&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;oklch(0.47 0.245 292)&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;oklch(0.47 0.245 292)&quot;,&quot;oklch(0.5 0.2 265)&quot;,&quot;oklch(0.52 0.16 190)&quot;,&quot;oklch(0.5 0.19 25)&quot;],&quot;section&quot;:&quot;Brand&quot;},&quot;startScreen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;dashboard&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;dashboard&quot;,&quot;manager&quot;,&quot;jobs&quot;,&quot;candidate&quot;,&quot;inbox&quot;,&quot;automations&quot;,&quot;review&quot;,&quot;settings&quot;,&quot;orgs&quot;],&quot;section&quot;:&quot;Prototype&quot;},&quot;sidebarCollapsed&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Prototype&quot;}}">
+const G = "linear-gradient(120deg,oklch(0.47 0.245 292) 0%,oklch(0.7 0.16 292) 52%,oklch(0.82 0.14 70) 100%)";
+const SCREENS = {
+  dashboard: { crumb: "Dashboard", eyebrow: "Leadership", title: "Hiring operation, one view", desc: "Sourcing, AI screening, interviews, outreach and analytics — every client, every role, in a single command center." },
+  manager: { crumb: "My dashboard", eyebrow: "Hiring manager", title: "Your roles today", desc: "What the AI prepared for you, and what only you can decide." },
+  jobs: { crumb: "Jobs", eyebrow: "Workspace", title: "Jobs", desc: "Every open role with live pipeline and AI screening counts.", action: "New job" },
+  newjob: { crumb: "Jobs / New", eyebrow: "Create", title: "Create a job", desc: "Define the role once — AI drafts the description and screens every applicant against it." },
+  candidates: { crumb: "Candidates", eyebrow: "Workspace", title: "Candidates", desc: "All candidates across roles, ranked by AI match score." },
+  candidate: { crumb: "Candidates / Priya Raman", eyebrow: "Candidate intelligence", title: "Priya Raman", desc: "AI-assembled profile from CV, screening replies and video interview. You make the call." },
+  inbox: { crumb: "Inbox", eyebrow: "AI screening", title: "Shared inbox", desc: "The AI screens candidates over WhatsApp and email, and hands over to you when it should." },
+  automations: { crumb: "Automations", eyebrow: "Automations", title: "Automations center", desc: "Inbound connectors and outbound sequences that keep the pipeline moving without you." },
+  review: { crumb: "Jobs / Review desk", eyebrow: "Review desk", title: "Senior Backend Engineer", desc: "Drag the cutoff to re-partition the ranked list. Everything above the line gets shortlisted." },
+  settings: { crumb: "Settings / Templates", eyebrow: "Settings", title: "Message templates", desc: "Outreach copy for email and WhatsApp, with placeholders filled per candidate." },
+  orgs: { crumb: "Organizations", eyebrow: "Admin", title: "Client workspaces", desc: "Each client company runs in its own workspace with its own roles, users and data.", action: "Create client workspace" }
+};
+const NAV = [
+  { label: "Workspace", items: [
+    { id: "dashboard", label: "Dashboard", icon: "▤" },
+    { id: "manager", label: "My dashboard", icon: "◈" },
+    { id: "jobs", label: "Jobs", icon: "▢" },
+    { id: "candidates", label: "Candidates", icon: "◍" },
+    { id: "inbox", label: "Inbox", icon: "✉", count: 4 },
+    { id: "automations", label: "Automations", icon: "⚙" }
+  ]},
+  { label: "Manage", items: [
+    { id: "settings", label: "Settings", icon: "◇" },
+    { id: "orgs", label: "Organizations", icon: "⬡" }
+  ]}
+];
+const WS = [
+  { name: "Acme Inc.", roles: "12 roles" }, { name: "Northwind Labs", roles: "7 roles" },
+  { name: "Meridian Health", roles: "4 roles" }, { name: "Cobalt Freight", roles: "3 roles" }
+];
+const KPIS = [
+  { label: "Open roles", value: "26", delta: "+4 this week", pos: true, s: [4,5,5,7,6,8,9], go: "jobs" },
+  { label: "Candidates in pipeline", value: "1,284", delta: "+186 this week", pos: true, s: [3,4,6,5,7,8,9], go: "candidates" },
+  { label: "AI-screened this week", value: "214", delta: "+38 vs last", pos: true, s: [2,4,3,6,7,7,9], go: "review" },
+  { label: "Interviews completed", value: "63", delta: "+9 vs last", pos: true, s: [5,4,6,6,7,8,8], go: "candidates" },
+  { label: "Messages sent", value: "1,902", delta: "61% reply rate", pos: true, s: [6,5,7,6,8,7,9], go: "inbox" },
+  { label: "Avg. time to shortlist", value: "1.8d", delta: "−0.9d vs last", pos: true, s: [9,8,7,7,5,4,3], go: "review" }
+];
+const FUNNEL = [
+  { stage: "Sourced", count: 1284, conv: "", color: "var(--c1)" },
+  { stage: "AI-screened", count: 792, conv: "62%", color: "oklch(0.55 0.22 292)" },
+  { stage: "Shortlisted", count: 268, conv: "34%", color: "var(--c2)" },
+  { stage: "Interviewed", count: 118, conv: "44%", color: "var(--c3)" },
+  { stage: "Offer", count: 31, conv: "26%", color: "var(--c4)" }
+];
+const SOURCES = [
+  { name: "Naukri Gulf", count: 486, rate: "22%", color: "var(--c1)" },
+  { name: "LinkedIn ads", count: 402, rate: "19%", color: "var(--c2)" },
+  { name: "Applications", count: 271, rate: "14%", color: "var(--c3)" },
+  { name: "Referrals", count: 125, rate: "38%", color: "var(--c4)" }
+];
+const CLIENTS = [
+  { name: "Acme Inc.", manager: "Rhea Kapoor", roles: 12, screened: 96, shortlisted: 34, tts: "1.4d", t: "good" },
+  { name: "Northwind Labs", manager: "Tom Abara", roles: 7, screened: 54, shortlisted: 19, tts: "2.1d", t: "good" },
+  { name: "Meridian Health", manager: "Sana Iqbal", roles: 4, screened: 38, shortlisted: 9, tts: "3.6d", t: "warn" },
+  { name: "Cobalt Freight", manager: "Diego Ruiz", roles: 3, screened: 26, shortlisted: 11, tts: "1.9d", t: "good" }
+];
+const RANKED = [
+  { name: "Priya Raman", role: "Senior Backend Engineer", score: 92, stage: "AI-interviewed", skills: ["Go", "Kubernetes", "Postgres"] },
+  { name: "Adnan Farouk", role: "Senior Backend Engineer", score: 88, stage: "AI-screened", skills: ["Go", "gRPC", "AWS"] },
+  { name: "Mei Lin Chen", role: "Senior Backend Engineer", score: 84, stage: "AI-interviewed", skills: ["Java", "Kafka", "Postgres"] },
+  { name: "Rohit Deshpande", role: "Platform Engineer", score: 79, stage: "AI-screened", skills: ["Terraform", "AWS", "Go"] },
+  { name: "Yara Haddad", role: "Senior Backend Engineer", score: 74, stage: "AI-screened", skills: ["Python", "Django", "Redis"] },
+  { name: "Samuel Okoye", role: "Backend Engineer", score: 68, stage: "Sourced", skills: ["Node", "MongoDB"] },
+  { name: "Lena Vogt", role: "Backend Engineer", score: 61, stage: "Sourced", skills: ["Ruby", "MySQL"] },
+  { name: "Karan Mehta", role: "Backend Engineer", score: 54, stage: "Sourced", skills: ["PHP", "Laravel"] }
+];
+const JOBS = [
+  { title: "Senior Backend Engineer", location: "Dubai, UAE", mode: "Hybrid", type: "Full-time", status: "Open", applicants: 184, screened: 122, shortlisted: 18, mix: [46, 32, 22] },
+  { title: "Product Designer", location: "Remote", mode: "Remote", type: "Full-time", status: "Open", applicants: 96, screened: 71, shortlisted: 12, mix: [28, 44, 28] },
+  { title: "Data Analyst", location: "Abu Dhabi, UAE", mode: "On-site", type: "Full-time", status: "Open", applicants: 142, screened: 88, shortlisted: 9, mix: [52, 24, 24] },
+  { title: "Sales Development Rep", location: "Dubai, UAE", mode: "On-site", type: "Full-time", status: "Draft", applicants: 0, screened: 0, shortlisted: 0, mix: [34, 33, 33] },
+  { title: "DevOps Engineer", location: "Remote", mode: "Remote", type: "Contract", status: "Open", applicants: 77, screened: 60, shortlisted: 14, mix: [30, 40, 30] },
+  { title: "Finance Manager", location: "Riyadh, KSA", mode: "Hybrid", type: "Full-time", status: "Closed", applicants: 118, screened: 90, shortlisted: 7, mix: [40, 30, 30] }
+];
+const CONVS = [
+  { name: "Priya Raman", channel: "WhatsApp", handler: "AI screening", unread: true, time: "2m", preview: "Notice period is 30 days, and I'm open to hybrid." },
+  { name: "Adnan Farouk", channel: "WhatsApp", handler: "AI screening", unread: true, time: "18m", preview: "Can you sponsor a work visa for this role?", escalated: true },
+  { name: "Mei Lin Chen", channel: "Email", handler: "You", unread: false, time: "1h", preview: "Thanks — Thursday 3pm works for the interview." },
+  { name: "Rohit Deshpande", channel: "WhatsApp", handler: "AI screening", unread: true, time: "3h", preview: "Expected salary is AED 32k per month." },
+  { name: "Yara Haddad", channel: "Email", handler: "AI screening", unread: true, time: "5h", preview: "Attaching my updated CV as requested." }
+];
+const THREADS = {
+  "Priya Raman": { sub: "Senior Backend Engineer · WhatsApp · +971 5• ••• 4412", escalated: false, messages: [
+    { who: "ai", text: "Hi Priya — this is RC Studio's assistant for Acme Inc. You applied for Senior Backend Engineer. Three quick questions and I'll pass you to the team.", meta: "AI · 10:02" },
+    { who: "ai", text: "What's your notice period?", meta: "AI · 10:02", chips: ["Immediate", "15 days", "30 days", "60 days"] },
+    { who: "cand", text: "30 days", meta: "Priya · 10:05" },
+    { who: "ai", text: "Preferred work mode?", meta: "AI · 10:05", chips: ["On-site", "Hybrid", "Remote"] },
+    { who: "cand", text: "Hybrid works for me — I'm based in Dubai.", meta: "Priya · 10:07" },
+    { who: "ai", text: "Expected monthly salary?", meta: "AI · 10:07" },
+    { who: "cand", text: "AED 34k", meta: "Priya · 10:09" },
+    { who: "ai", text: "Thank you. You scored 92 on match — I've sent a 12-minute video interview link and flagged your profile for Rhea Kapoor.", meta: "AI · 10:09" }
+  ]},
+  "Adnan Farouk": { sub: "Senior Backend Engineer · WhatsApp · +971 5• ••• 8890", escalated: true, messages: [
+    { who: "ai", text: "What's your notice period?", meta: "AI · 09:31", chips: ["Immediate", "30 days", "60 days"] },
+    { who: "cand", text: "60 days.", meta: "Adnan · 09:34" },
+    { who: "cand", text: "Can you sponsor a work visa for this role? I'm currently in Cairo.", meta: "Adnan · 09:36" },
+    { who: "ai", text: "That's outside my script — I've escalated this to a recruiter and paused screening.", meta: "AI · 09:36" }
+  ]},
+  "Mei Lin Chen": { sub: "Senior Backend Engineer · Email · mei.chen@example.com", escalated: false, messages: [
+    { who: "you", text: "Hi Mei Lin — your AI interview scored strongly on technical depth. Can we do a 45-minute call with the hiring manager this week?", meta: "You · 08:12" },
+    { who: "cand", text: "Thanks — Thursday 3pm works for the interview.", meta: "Mei Lin · 09:04" }
+  ]},
+  "Rohit Deshpande": { sub: "Platform Engineer · WhatsApp · +91 9• ••• 2231", escalated: false, messages: [
+    { who: "ai", text: "Expected monthly salary?", meta: "AI · 07:20" },
+    { who: "cand", text: "Expected salary is AED 32k per month.", meta: "Rohit · 07:24" },
+    { who: "ai", text: "Noted. That's within the band for this role — continuing screening.", meta: "AI · 07:24" }
+  ]},
+  "Yara Haddad": { sub: "Senior Backend Engineer · Email · yara.h@example.com", escalated: false, messages: [
+    { who: "ai", text: "Could you share an updated CV with your most recent role?", meta: "AI · 05:40" },
+    { who: "cand", text: "Attaching my updated CV as requested.", meta: "Yara · 06:02" }
+  ]}
+};
+const CANDIDATE = {
+  name: "Priya Raman", role: "Senior Backend Engineer", location: "Dubai, UAE", experience: "8 yrs experience",
+  score: 92, band: "Strong fit", recommendation: "Strong fit — recommend interview",
+  strengths: ["8 years on Go services at scale; owned a 40-service migration to Kubernetes.", "Postgres performance work matches the role's biggest current problem.", "Video interview: clearest structured answers of the shortlist (9.1 communication)."],
+  gaps: ["No hands-on Kafka — the role lists it as important, not must-have.", "Expected salary AED 34k is 6% above the posted band.", "Notice period 30 days; team wanted a start within 3 weeks."],
+  competencies: [{ name: "Communication", score: 9.1 }, { name: "Technical depth", score: 8.6 }, { name: "Problem-solving", score: 8.2 }],
+  skills: [{ name: "Go", m: true }, { name: "Kubernetes", m: true }, { name: "Postgres", m: true }, { name: "gRPC", m: true }, { name: "Terraform", m: false }, { name: "AWS", m: true }, { name: "Python", m: false }, { name: "Redis", m: false }, { name: "Observability", m: false }],
+  jobs: [
+    { title: "Staff Backend Engineer", company: "Talos Systems", dates: "2021 — present · Dubai", note: "Led platform migration to Kubernetes across 40 services; cut p95 latency 38%." },
+    { title: "Senior Backend Engineer", company: "Fintrail", dates: "2018 — 2021 · Bangalore", note: "Built payment ledger in Go handling 2M daily transactions." },
+    { title: "Backend Engineer", company: "Zerobase", dates: "2016 — 2018 · Bangalore", note: "Python services and Postgres schema design for a logistics product." }
+  ],
+  education: "B.E. Computer Science, BMS College of Engineering, 2016",
+  screening: [{ q: "Notice period", a: "30 days" }, { q: "Work mode", a: "Hybrid — based in Dubai" }, { q: "Expected salary", a: "AED 34,000 / month" }, { q: "Visa status", a: "UAE residency, transferable" }]
+};
+const PLACEHOLDERS = ["{candidate_name}", "{job_title}", "{company_name}", "{recruiter_name}"];
+const SAMPLE = { "{candidate_name}": "Priya Raman", "{job_title}": "Senior Backend Engineer", "{company_name}": "Acme Inc.", "{recruiter_name}": "Jamie Doe" };
+
+class Component extends DCLogic {
+  state = {
+    screen: this.props.startScreen || "dashboard", collapsed: !!this.props.sidebarCollapsed, wsOpen: false, workspace: "Acme Inc.",
+    bot: true, cutoff: 75, tab: "Email", conv: "Priya Raman", decision: "",
+    toggles: { "Naukri Gulf": true, "LinkedIn job ads": true, "Applications": true, "Screening sequence": true, "Follow-up nudge": true, "Interview invite": false },
+    levels: { Go: 0, Kubernetes: 0, Postgres: 0, gRPC: 1, Kafka: 1, Terraform: 2, Observability: 2 },
+    jd: "We're hiring a Senior Backend Engineer to own the services behind Acme's core platform. You'll design and ship Go services on Kubernetes, tune Postgres under real load, and set the standard for reliability across the team.",
+    subject: "{job_title} at {company_name} — next step",
+    body: "Hi {candidate_name},\n\nThanks for applying to {job_title} at {company_name}. Your profile scored well against the role, and I'd like to move you to a short screening conversation.\n\nCould you reply with your notice period and preferred work mode?\n\nBest,\n{recruiter_name}"
+  };
+
+  go = (s) => () => this.setState({ screen: s, wsOpen: false, decision: "" });
+  spark(arr, up) {
+    const max = Math.max.apply(null, arr), min = Math.min.apply(null, arr);
+    const span = max - min || 1;
+    return arr.map((v, i) => (i * (100 / (arr.length - 1))).toFixed(1) + "," + (30 - ((v - min) / span) * 26).toFixed(1)).join(" ");
+  }
+  band(n) {
+    if (n >= 85) return { label: "Strong fit", fg: "var(--success)", bg: "oklch(0.58 0.18 145 / .12)", border: "oklch(0.85 0.08 145)" };
+    if (n >= 70) return { label: "Good fit", fg: "var(--brand)", bg: "var(--brand-soft)", border: "oklch(0.88 0.05 292)" };
+    if (n >= 60) return { label: "Maybe", fg: "oklch(0.45 0.13 65)", bg: "oklch(0.67 0.17 65 / .13)", border: "oklch(0.88 0.06 65)" };
+    return { label: "Weak", fg: "var(--muted-ink)", bg: "var(--muted)", border: "var(--line)" };
+  }
+  fill(t) { let s = t; PLACEHOLDERS.forEach((p) => { s = s.split(p).join(SAMPLE[p]); }); return s; }
+
+  renderVals() {
+    const st = this.state, sc = SCREENS[st.screen] || SCREENS.dashboard;
+    const accent = this.props.accentColor || "oklch(0.47 0.245 292)";
+    const expanded = !st.collapsed;
+    const funnelMax = FUNNEL[0].count;
+    const skillLevels = [
+      { name: "Must-have", bg: "var(--brand)", fg: "white", border: "var(--brand)" },
+      { name: "Important", bg: "var(--brand-soft)", fg: "var(--brand)", border: "oklch(0.85 0.07 292)" },
+      { name: "Nice-to-have", bg: "var(--muted)", fg: "var(--muted-ink)", border: "var(--line)" }
+    ];
+    let acc = 0;
+    const total = SOURCES.reduce((a, s) => a + s.count, 0);
+    const stops = SOURCES.map((s) => {
+      const from = (acc / total) * 100; acc += s.count;
+      const to = (acc / total) * 100;
+      return s.color + " " + from.toFixed(1) + "% " + to.toFixed(1) + "%";
+    }).join(",");
+    const thread = THREADS[st.conv] || THREADS["Priya Raman"];
+    const cb = this.band(CANDIDATE.score);
+
+    return {
+      expanded,
+      sidebarWidth: expanded ? "252px" : "74px",
+      collapseIcon: expanded ? "‹" : "›",
+      toggleSidebar: () => this.setState({ collapsed: !st.collapsed, wsOpen: false }),
+      toggleWs: () => this.setState({ wsOpen: !st.wsOpen }),
+      wsOpen: st.wsOpen,
+      workspace: st.workspace,
+      workspaceInitial: st.workspace.charAt(0),
+      workspaces: WS.map((w) => ({ ...w, initial: w.name.charAt(0), bg: w.name === st.workspace ? "oklch(0.7 0.19 292 / .16)" : "transparent", pick: () => this.setState({ workspace: w.name, wsOpen: false }) })),
+      navGroups: NAV.map((g) => ({ label: g.label, items: g.items.map((it) => {
+        const active = st.screen === it.id || (it.id === "jobs" && (st.screen === "newjob" || st.screen === "review")) || (it.id === "candidates" && st.screen === "candidate");
+        return { ...it, go: this.go(it.id), bg: active ? "oklch(0.7 0.19 292 / .15)" : "transparent", fg: active ? "oklch(0.78 0.15 292)" : "oklch(0.94 0.015 292 / .6)", weight: active ? 600 : 500 };
+      })})),
+      crumb: sc.crumb, eyebrow: sc.eyebrow, title: sc.title, desc: sc.desc,
+      hasAction: !!sc.action, actionLabel: sc.action,
+      headerAction: () => this.setState({ screen: st.screen === "jobs" ? "newjob" : st.screen }),
+
+      isDashboard: st.screen === "dashboard", isManager: st.screen === "manager", isJobs: st.screen === "jobs",
+      isNewJob: st.screen === "newjob", isCandidates: st.screen === "candidates", isCandidate: st.screen === "candidate",
+      isInbox: st.screen === "inbox", isAutomations: st.screen === "automations", isReview: st.screen === "review",
+      isSettings: st.screen === "settings", isOrgs: st.screen === "orgs",
+
+      kpis: KPIS.map((k) => ({ ...k, points: this.spark(k.s), stroke: accent, deltaColor: k.pos ? "var(--success)" : "var(--error)", go: this.go(k.go) })),
+      funnel: FUNNEL.map((f) => ({ stage: f.stage, color: f.color, width: ((f.count / funnelMax) * 100).toFixed(1) + "%", meta: f.conv ? f.count.toLocaleString() + " · " + f.conv + " conv." : f.count.toLocaleString() })),
+      sources: SOURCES,
+      donut: "conic-gradient(" + stops + ")",
+      clients: CLIENTS.map((c) => {
+        const ok = c.t === "good";
+        return { ...c, pillFg: ok ? "var(--success)" : "oklch(0.45 0.13 65)", pillBg: ok ? "oklch(0.58 0.18 145 / .12)" : "oklch(0.67 0.17 65 / .13)", pillBorder: ok ? "oklch(0.85 0.08 145)" : "oklch(0.88 0.06 65)" };
+      }),
+
+      candidate: { ...CANDIDATE,
+        competencies: CANDIDATE.competencies.map((c, i) => ({ ...c, width: (c.score * 10) + "%", color: [ "var(--c1)", "var(--c2)", "var(--c3)" ][i] })),
+        skills: CANDIDATE.skills.map((s) => ({ name: s.name, bg: s.m ? "var(--brand-soft)" : "var(--muted)", fg: s.m ? "var(--brand)" : "var(--muted-ink)", border: s.m ? "oklch(0.88 0.05 292)" : "var(--line)", weight: s.m ? 600 : 500 }))
+      },
+      ringBg: "conic-gradient(" + cb.fg + " 0% " + CANDIDATE.score + "%, var(--muted) " + CANDIDATE.score + "% 100%)",
+      scoreColor: cb.fg, bandFg: cb.fg, bandBg: cb.bg, bandBorder: cb.border,
+      decision: st.decision,
+      decideShortlist: () => this.setState({ decision: "Shortlisted — Rhea Kapoor notified." }),
+      decideInterview: () => this.setState({ decision: "Human interview requested — invite queued." }),
+      decideReject: () => this.setState({ decision: "Rejected — polite decline sent from template." }),
+
+      convs: CONVS.map((c) => ({ ...c, pick: () => this.setState({ conv: c.name }),
+        bg: c.name === st.conv ? "white" : "transparent",
+        activeBar: c.name === st.conv ? "var(--brand)" : "transparent",
+        chanIcon: c.channel === "WhatsApp" ? "◕" : "✉",
+        chanBg: c.channel === "WhatsApp" ? "oklch(0.58 0.18 145 / .12)" : "var(--muted)",
+        chanFg: c.channel === "WhatsApp" ? "var(--success)" : "var(--muted-ink)",
+        handlerBg: c.handler === "AI screening" ? "var(--brand-soft)" : "oklch(0.7 0.13 190 / .16)",
+        handlerFg: c.handler === "AI screening" ? "var(--brand)" : "oklch(0.42 0.09 190)" })),
+      thread: { name: st.conv, sub: thread.sub, escalated: thread.escalated,
+        messages: thread.messages.map((m) => {
+          const mine = m.who !== "cand";
+          return { text: m.text, meta: m.meta, chips: m.chips, align: mine ? "flex-start" : "flex-end",
+            radius: mine ? "13px 13px 13px 4px" : "13px 13px 4px 13px",
+            bg: m.who === "ai" ? "var(--brand-soft)" : (m.who === "you" ? "white" : "var(--brand)"),
+            fg: m.who === "cand" ? "white" : "var(--ink)",
+            border: m.who === "cand" ? "var(--brand)" : (m.who === "ai" ? "oklch(0.9 0.04 292)" : "var(--line)") };
+        })},
+      bot: st.bot,
+      toggleBot: () => this.setState({ bot: !st.bot }),
+      botTrack: st.bot ? "var(--brand)" : "oklch(0.7 0.13 190)",
+      botKnob: st.bot ? "3px" : "23px",
+      botLabelColor: st.bot ? "var(--brand)" : "var(--muted-ink)",
+      humanLabelColor: st.bot ? "var(--muted-ink)" : "oklch(0.42 0.09 190)",
+      composerHint: st.bot ? "AI is handling this conversation — switch to Human to reply" : "Write a reply to " + st.conv + "…",
+
+      inbound: [
+        { name: "Naukri Gulf", sub: "Job board feed · every 15 min", icon: "N", count: "486", rate: "22%" },
+        { name: "LinkedIn job ads", sub: "Sponsored ads · 3 campaigns", icon: "in", count: "402", rate: "19%" },
+        { name: "Applications", sub: "Careers page + referrals", icon: "◍", count: "396", rate: "17%" }
+      ].map((a) => {
+        const on = st.toggles[a.name];
+        return { ...a, toggle: () => this.setState({ toggles: { ...st.toggles, [a.name]: !on } }),
+          track: on ? "var(--brand)" : "oklch(0.88 0.02 292)", knob: on ? "22px" : "3px",
+          stateLabel: on ? "● Syncing — feeding pipeline" : "○ Paused — no new candidates", stateFg: on ? "var(--success)" : "var(--muted-ink)" };
+      }),
+      outbound: [
+        { name: "Screening sequence", channel: "WhatsApp → Email fallback", steps: ["Intro", "3 screening Qs", "Video interview link"], stats: "142 contacted · 61% replied · 88 screened" },
+        { name: "Follow-up nudge", channel: "WhatsApp · 48h after silence", steps: ["Reminder", "Reschedule offer"], stats: "63 nudged · 41% recovered" },
+        { name: "Interview invite", channel: "Email · on shortlist", steps: ["Invite", "Calendar link", "Reminder"], stats: "Paused — 0 sent this week" }
+      ].map((o) => {
+        const on = st.toggles[o.name];
+        return { ...o, toggle: () => this.setState({ toggles: { ...st.toggles, [o.name]: !on } }),
+          track: on ? "var(--brand)" : "oklch(0.88 0.02 292)", knob: on ? "22px" : "3px" };
+      }),
+
+      managerCards: [
+        { label: "My open roles", value: "5", note: "2 filling behind pace", noteColor: "oklch(0.45 0.13 65)" },
+        { label: "Awaiting my review", value: "14", note: "Oldest waiting 6h", noteColor: "var(--muted-ink)" },
+        { label: "AI-screened & ready", value: "31", note: "+12 since yesterday", noteColor: "var(--success)" },
+        { label: "Interviews this week", value: "7", note: "3 tomorrow", noteColor: "var(--muted-ink)" }
+      ],
+      queue: RANKED.slice(0, 4).map((r) => {
+        const b = this.band(r.score);
+        return { name: r.name, role: r.role, score: r.score, band: b.label, fg: b.fg, bg: b.bg, border: b.border,
+          initials: r.name.split(" ").map((p) => p[0]).join(""),
+          note: r.stage === "AI-interviewed" ? "video interview complete" : "screening complete",
+          open: this.go("candidate") };
+      }),
+
+      jobs: JOBS.map((j) => {
+        const s = j.status;
+        const c = s === "Open" ? { fg: "var(--success)", bg: "oklch(0.58 0.18 145 / .12)", border: "oklch(0.85 0.08 145)" }
+          : s === "Draft" ? { fg: "oklch(0.45 0.13 65)", bg: "oklch(0.67 0.17 65 / .13)", border: "oklch(0.88 0.06 65)" }
+          : { fg: "var(--muted-ink)", bg: "var(--muted)", border: "var(--line)" };
+        return { ...j, statusFg: c.fg, statusBg: c.bg, statusBorder: c.border, open: this.go("review"),
+          mix: j.mix.map((m, i) => ({ width: m + "%", color: ["var(--c1)", "var(--c2)", "var(--c3)"][i] })),
+          mixLabel: "Naukri " + j.mix[0] + "% · LinkedIn " + j.mix[1] + "% · Applications " + j.mix[2] + "%" };
+      }),
+
+      jd: st.jd, onJd: (e) => this.setState({ jd: e.target.value }),
+      jdButton: "Generate",
+      generateJd: () => this.setState({ jd: "Acme Inc. is looking for a Senior Backend Engineer in Dubai to own the services behind our core platform.\n\nYou will design Go services running on Kubernetes, tune Postgres under production load, and raise the reliability bar for a team of nine engineers. You'll work directly with the platform lead on a multi-year migration off our legacy monolith.\n\nWe're looking for 6+ years building distributed backend systems, strong Go and Postgres depth, and the judgement to keep a busy system simple." }),
+      jobSkills: Object.keys(st.levels).map((name) => {
+        const lv = skillLevels[st.levels[name]];
+        return { name, level: lv.name, bg: lv.bg, fg: lv.fg, border: lv.border,
+          cycle: () => this.setState({ levels: { ...st.levels, [name]: (st.levels[name] + 1) % 3 } }) };
+      }),
+      nextSteps: [
+        { i: 1, text: "Job posts to Naukri Gulf and LinkedIn within 10 minutes." },
+        { i: 2, text: "Every applicant is screened over WhatsApp against your must-have skills." },
+        { i: 3, text: "Candidates above 70 match get an AI video interview link." },
+        { i: 4, text: "You get a ranked shortlist in the Review Desk — you decide who moves on." }
+      ],
+
+      cutoff: st.cutoff,
+      onCutoff: (e) => this.setState({ cutoff: Number(e.target.value) }),
+      aboveCount: RANKED.filter((r) => r.score >= st.cutoff).length,
+      belowCount: RANKED.filter((r) => r.score < st.cutoff).length,
+      ranked: RANKED.map((r, i) => {
+        const b = this.band(r.score), above = r.score >= st.cutoff;
+        return { ...r, rank: i + 1, band: b.label, fg: b.fg, bg: b.bg, border: b.border,
+          initials: r.name.split(" ").map((p) => p[0]).join(""),
+          bar: above ? "var(--success)" : "transparent",
+          rowBg: above ? "oklch(0.58 0.18 145 / .05)" : "white",
+          opacity: above ? 1 : 0.5,
+          state: above ? "Shortlisted" : "Below cutoff",
+          stateFg: above ? "var(--success)" : "var(--muted-ink)",
+          open: this.go("candidate") };
+      }),
+
+      tabs: ["Email", "WhatsApp"].map((t) => ({ label: t, pick: () => this.setState({ tab: t }),
+        bg: st.tab === t ? "white" : "transparent", fg: st.tab === t ? "var(--ink)" : "var(--muted-ink)",
+        shadow: st.tab === t ? "0 2px 8px oklch(0.3 0.06 292 / .1)" : "none" })),
+      isEmail: st.tab === "Email", isWhatsapp: st.tab === "WhatsApp",
+      tplTitle: st.tab === "Email" ? "Email screening template" : "WhatsApp screening template",
+      subject: st.subject, onSubject: (e) => this.setState({ subject: e.target.value }),
+      body: st.body, onBody: (e) => this.setState({ body: e.target.value }),
+      previewSubject: this.fill(st.subject), previewBody: this.fill(st.body),
+      placeholders: PLACEHOLDERS.map((token) => ({ token, insert: () => this.setState({ body: st.body + " " + token }) })),
+
+      orgs: [
+        { name: "Acme Inc.", plan: "Enterprise", users: 24, roles: 12, activity: "Active today" },
+        { name: "Northwind Labs", plan: "Growth", users: 11, roles: 7, activity: "Active today" },
+        { name: "Meridian Health", plan: "Growth", users: 8, roles: 4, activity: "3 days idle" },
+        { name: "Cobalt Freight", plan: "Starter", users: 5, roles: 3, activity: "Active today" },
+        { name: "Vertex Retail", plan: "Starter", users: 3, roles: 0, activity: "Onboarding" }
+      ].map((o) => {
+        const live = o.activity === "Active today";
+        return { ...o, initial: o.name.charAt(0),
+          fg: live ? "var(--success)" : "var(--muted-ink)",
+          bg: live ? "oklch(0.58 0.18 145 / .12)" : "var(--muted)",
+          border: live ? "oklch(0.85 0.08 145)" : "var(--line)",
+          open: () => this.setState({ workspace: o.name, screen: "dashboard" }) };
+      }),
+      goJobs: this.go("jobs")
+    };
+  }
+}
+
+</script>
+</body>
+</html>
