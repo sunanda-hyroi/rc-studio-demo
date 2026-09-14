@@ -329,7 +329,7 @@ input,button,textarea,select{font-family:inherit}
                 <div style="flex:none;width:150px;height:150px;border-radius:999px;background:{{ donut }};display:flex;align-items:center;justify-content:center">
                   <div style="width:96px;height:96px;border-radius:999px;background:white;display:flex;flex-direction:column;align-items:center;justify-content:center">
                     <div style="font-family:Sora,sans-serif;font-size:20px;font-weight:600">1,284</div>
-                    <div style="font-size:10.5px;color:var(--muted-ink)">sourced</div>
+                    <div style="font-size:10.5px;color:var(--muted-ink)">scored</div>
                   </div>
                 </div>
                 <div style="flex:1;min-width:180px;display:flex;flex-direction:column;gap:11px">
@@ -542,8 +542,40 @@ input,button,textarea,select{font-family:inherit}
               </sc-for>
             </div>
             <div style="flex:1"></div>
-            <div style="font-size:12px;color:var(--muted-ink);white-space:nowrap">Drag a card between columns, or use the stage dropdown.</div>
+            <div style="font-size:12px;color:var(--muted-ink);white-space:nowrap">Drag a card, use the stage dropdown, or select several and move them at once.</div>
           </div>
+
+          <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:14px;padding:12px 14px">
+            <span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-ink);white-space:nowrap">Filter</span>
+            <input value="{{ fQuery }}" onChange="{{ onFQuery }}" placeholder="Search candidate…" style="flex:1;min-width:170px;height:34px;border:1px solid var(--line);border-radius:9px;padding:0 11px;font-size:12.5px;background:white;color:var(--ink)" />
+            <select value="{{ fBand }}" onChange="{{ onFBand }}" style="flex:none;height:34px;border:1px solid var(--line);border-radius:9px;background:white;color:var(--ink);font-size:12.5px;font-weight:600;padding:0 8px;cursor:pointer">
+              <sc-for list="{{ filterBands }}" as="b" hint-placeholder-count="5"><option value="{{ b.id }}">{{ b.label }}</option></sc-for>
+            </select>
+            <select value="{{ fStage }}" onChange="{{ onFStage }}" style="flex:none;height:34px;border:1px solid var(--line);border-radius:9px;background:white;color:var(--ink);font-size:12.5px;font-weight:600;padding:0 8px;cursor:pointer">
+              <sc-for list="{{ filterStages }}" as="s" hint-placeholder-count="6"><option value="{{ s.id }}">{{ s.label }}</option></sc-for>
+            </select>
+            <select value="{{ fRec }}" onChange="{{ onFRec }}" style="flex:none;height:34px;border:1px solid var(--line);border-radius:9px;background:white;color:var(--ink);font-size:12.5px;font-weight:600;padding:0 8px;cursor:pointer">
+              <sc-for list="{{ filterRecs }}" as="r" hint-placeholder-count="4"><option value="{{ r.id }}">{{ r.label }}</option></sc-for>
+            </select>
+            <sc-if value="{{ filtersOn }}">
+              <button onClick="{{ clearFilters }}" style="flex:none;height:34px;padding:0 12px;border:1px solid var(--line);border-radius:9px;background:white;color:var(--brand);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap" style-hover="background:var(--muted)">Clear filters</button>
+            </sc-if>
+          </div>
+
+          <sc-if value="{{ hasSel }}">
+            <div style="display:flex;align-items:center;gap:11px;flex-wrap:wrap;border:1px solid var(--ring);background:linear-gradient(180deg,var(--brand-soft),white);border-radius:14px;padding:12px 14px;animation:rcIn .14s ease">
+              <span style="font-size:12.5px;font-weight:700;color:var(--brand);white-space:nowrap">{{ selCount }} selected</span>
+              <div style="flex:1"></div>
+              <span style="font-size:12px;font-weight:600;white-space:nowrap">Move to</span>
+              <select value="{{ bulkStage }}" onChange="{{ onBulkStage }}" style="flex:none;height:34px;border:1px solid var(--line);border-radius:9px;background:white;color:var(--ink);font-size:12.5px;font-weight:600;padding:0 8px;cursor:pointer">
+                <sc-for list="{{ stageOptions }}" as="s" hint-placeholder-count="6"><option value="{{ s.id }}">{{ s.label }}</option></sc-for>
+              </select>
+              <button onClick="{{ bulkMove }}" style="flex:none;height:34px;padding:0 14px;border:0;border-radius:9px;background:var(--brand);color:white;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap" style-hover="filter:brightness(1.08)">Move {{ selCount }}</button>
+              <button onClick="{{ bulkWhatsApp }}" style="flex:none;height:34px;padding:0 12px;border:1px solid oklch(0.86 0.07 145);border-radius:9px;background:oklch(0.58 0.18 145 / .1);color:var(--success);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap" style-hover="filter:brightness(0.98)">✆ WhatsApp</button>
+              <button onClick="{{ bulkEmail }}" style="flex:none;height:34px;padding:0 12px;border:1px solid oklch(0.88 0.05 292);border-radius:9px;background:white;color:var(--brand);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap" style-hover="background:var(--muted)">✉ Email</button>
+              <button onClick="{{ bulkClear }}" style="flex:none;height:34px;padding:0 11px;border:1px solid var(--line);border-radius:9px;background:white;color:var(--muted-ink);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap" style-hover="background:var(--muted)">Clear</button>
+            </div>
+          </sc-if>
 
           <sc-if value="{{ isKanban }}">
             <div style="display:flex;gap:14px;align-items:flex-start;overflow-x:auto;padding-bottom:10px">
@@ -554,6 +586,9 @@ input,button,textarea,select{font-family:inherit}
                     <span style="flex:1;font-size:12.5px;font-weight:700;white-space:nowrap">{{ col.label }}</span>
                     <span style="flex:none;min-width:22px;height:20px;padding:0 7px;border-radius:999px;background:white;border:1px solid var(--line);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center">{{ col.count }}</span>
                   </div>
+                  <sc-if value="{{ col.hasCards }}">
+                    <button onClick="{{ col.selectAll }}" style="height:26px;border:1px solid var(--line);border-radius:8px;background:white;color:var(--muted-ink);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap" style-hover="background:var(--muted);color:var(--brand)">{{ col.selectAllLabel }}</button>
+                  </sc-if>
                   <sc-if value="{{ col.isCall }}">
                     <div style="display:flex;gap:6px">
                       <sc-for list="{{ callModes }}" as="cm" hint-placeholder-count="2">
@@ -562,8 +597,9 @@ input,button,textarea,select{font-family:inherit}
                     </div>
                   </sc-if>
                   <sc-for list="{{ col.cards }}" as="c" hint-placeholder-count="2">
-                    <div draggable="true" onDragStart="{{ c.onDragStart }}" style="border:1px solid var(--line);background:white;border-radius:13px;padding:13px;box-shadow:var(--card-sh);cursor:grab;display:flex;flex-direction:column;gap:10px" style-hover="border-color:oklch(0.75 0.1 292)">
+                    <div draggable="true" onDragStart="{{ c.onDragStart }}" style="border:1px solid {{ c.cardBorder }};background:{{ c.cardBg }};border-radius:13px;padding:13px;box-shadow:var(--card-sh);cursor:grab;display:flex;flex-direction:column;gap:10px" style-hover="border-color:oklch(0.75 0.1 292)">
                       <div style="display:flex;align-items:flex-start;gap:9px">
+                        <input type="checkbox" checked="{{ c.checked }}" onChange="{{ c.toggleSel }}" style="flex:none;width:15px;height:15px;margin-top:7px;accent-color:oklch(0.47 0.245 292);cursor:pointer" />
                         <div style="flex:none;width:30px;height:30px;border-radius:9px;background:var(--brand-soft);color:var(--brand);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">{{ c.initials }}</div>
                         <div onClick="{{ c.open }}" style="flex:1;min-width:0;cursor:pointer">
                           <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.name }}</div>
@@ -581,6 +617,9 @@ input,button,textarea,select{font-family:inherit}
                           </sc-for>
                         </select>
                       </div>
+                      <sc-if value="{{ c.inCraft }}">
+                        <button onClick="{{ c.open }}" style="height:30px;border:1px solid oklch(0.88 0.08 55);border-radius:8px;background:oklch(0.78 0.13 55 / .14);color:{{ c.craftFg }};font-size:11.5px;font-weight:700;cursor:pointer;white-space:nowrap" style-hover="filter:brightness(0.98)">{{ c.craftLabel }}</button>
+                      </sc-if>
                       <sc-if value="{{ c.inCall }}">
                         <div style="border-top:1px solid var(--line);padding-top:9px;display:flex;flex-direction:column;gap:7px">
                           <div style="display:flex;align-items:center;gap:7px">
@@ -615,7 +654,7 @@ input,button,textarea,select{font-family:inherit}
             <div style="border:1px solid var(--line);background:white;box-shadow:var(--card-sh);border-radius:16px;overflow:hidden">
               <div style="display:flex;align-items:center;gap:14px;padding:13px 20px;border-bottom:1px solid var(--line);background:oklch(0.99 0.008 292);font-size:11.5px;font-weight:600;color:var(--muted-ink)">
                 <span style="flex:1;min-width:160px">Candidate</span>
-                <span style="flex:none;width:120px">Resume score</span>
+                <span style="flex:none;width:120px">Score</span>
                 <span style="flex:none;width:168px">Stage</span>
                 <span style="flex:none;width:132px">Quick actions</span>
               </div>
@@ -812,6 +851,7 @@ input,button,textarea,select{font-family:inherit}
             <div style="border:1px solid var(--line);background:white;box-shadow:var(--card-sh);border-radius:16px;overflow:hidden">
               <div style="display:flex;align-items:center;gap:14px;padding:13px 20px;border-bottom:1px solid var(--line);background:oklch(0.99 0.008 292);font-size:11.5px;font-weight:600;color:var(--muted-ink)">
                 <span style="flex:1;min-width:200px">Job</span>
+                <span style="flex:none;width:190px">Assignment</span>
                 <span style="flex:none;width:78px">Skills</span>
                 <span style="flex:none;width:150px">Scored · crafted</span>
                 <span style="flex:none;width:104px">Created</span>
@@ -833,6 +873,16 @@ input,button,textarea,select{font-family:inherit}
                     </div>
                     <div style="font-size:11px;color:var(--muted-ink);margin-top:3px">{{ j.jobId }} · {{ j.location }} · {{ j.mode }}</div>
                   </div>
+                  <div style="flex:none;width:190px;display:flex;gap:14px">
+                    <div style="min-width:0">
+                      <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-ink)">TL</div>
+                      <div style="font-size:11.5px;font-weight:600;color:{{ j.leadFg }};white-space:nowrap;margin-top:2px">{{ j.leadName }}</div>
+                    </div>
+                    <div style="min-width:0">
+                      <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-ink)">Recruiter</div>
+                      <div style="font-size:11.5px;font-weight:600;color:{{ j.recFg }};white-space:nowrap;margin-top:2px">{{ j.recName }}</div>
+                    </div>
+                  </div>
                   <span style="flex:none;width:78px;font-size:12.5px">{{ j.skillsCount }}</span>
                   <span style="flex:none;width:150px;font-size:12.5px;color:var(--muted-ink)">{{ j.scored }} scored · {{ j.crafted }} crafted</span>
                   <span style="flex:none;width:104px;font-size:12px;color:var(--muted-ink);white-space:nowrap">{{ j.created }}</span>
@@ -840,6 +890,13 @@ input,button,textarea,select{font-family:inherit}
                   <button onClick="{{ j.open }}" style="flex:none;width:74px;height:30px;border:1px solid var(--line);border-radius:8px;background:white;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer" style-hover="background:var(--muted)">Open</button>
                 </div>
               </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ noJobs }}">
+            <div style="border:1px dashed oklch(0.85 0.03 292);background:white;border-radius:16px;padding:28px;text-align:center">
+              <div style="font-size:13.5px;font-weight:600">Nothing here yet</div>
+              <div style="font-size:12px;color:var(--muted-ink);margin-top:7px">{{ noJobsCopy }}</div>
             </div>
           </sc-if>
 
@@ -868,6 +925,32 @@ input,button,textarea,select{font-family:inherit}
                 </sc-if>
               </div>
               <div style="font-size:11px;color:var(--muted-ink);margin-top:9px">Created {{ j.created }} · Created by: <span style="font-weight:600;color:var(--ink)">{{ j.createdBy }}</span></div>
+
+              <div style="margin-top:13px;border-top:1px solid var(--line);padding-top:13px">
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                  <span style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-ink);white-space:nowrap">Assignment</span>
+                  <span style="font-size:11.5px;font-weight:600;color:{{ j.trailFg }};white-space:nowrap">{{ j.trail }}</span>
+                </div>
+                <sc-if value="{{ j.canAssignLead }}">
+                  <label style="display:flex;flex-direction:column;gap:5px;margin-top:10px">
+                    <span style="font-size:11px;font-weight:600;color:var(--muted-ink)">Assigned Team Lead</span>
+                    <select value="{{ j.leadName }}" onChange="{{ j.onLead }}" style="height:32px;border:1px solid var(--line);border-radius:8px;background:white;color:var(--ink);font-size:12px;font-weight:600;padding:0 7px;cursor:pointer">
+                      <sc-for list="{{ j.leadOptions }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}">{{ o.label }}</option></sc-for>
+                    </select>
+                  </label>
+                </sc-if>
+                <sc-if value="{{ j.canAssignRec }}">
+                  <label style="display:flex;flex-direction:column;gap:5px;margin-top:9px">
+                    <span style="font-size:11px;font-weight:600;color:var(--muted-ink)">Assigned Recruiter</span>
+                    <select value="{{ j.recName }}" onChange="{{ j.onRec }}" style="height:32px;border:1px solid var(--line);border-radius:8px;background:white;color:var(--ink);font-size:12px;font-weight:600;padding:0 7px;cursor:pointer">
+                      <sc-for list="{{ j.recOptions }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}">{{ o.label }}</option></sc-for>
+                    </select>
+                  </label>
+                </sc-if>
+                <sc-if value="{{ j.recBlocked }}">
+                  <div style="font-size:11px;color:var(--muted-ink);margin-top:9px">Assign a Team Lead first — the lead picks the recruiter.</div>
+                </sc-if>
+              </div>
 
               <sc-if value="{{ modVault }}">
                 <button onClick="{{ j.openDb }}" style="width:100%;margin-top:14px;border:1px solid oklch(0.88 0.05 292);background:linear-gradient(180deg,var(--brand-soft),white);border-radius:11px;padding:11px 13px;display:flex;align-items:center;gap:11px;cursor:pointer;text-align:left" style-hover="border-color:var(--ring)">
@@ -933,6 +1016,12 @@ input,button,textarea,select{font-family:inherit}
                   <sc-for list="{{ files }}" as="f" hint-placeholder-count="3">
                     <span style="display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:white;border-radius:8px;padding:4px 9px;font-size:11.5px;font-weight:500;white-space:nowrap">{{ f.name }} <span style="color:var(--muted-ink)">{{ f.size }}</span> <button onClick="{{ f.remove }}" style="border:0;background:transparent;color:var(--muted-ink);cursor:pointer;font-size:12px;padding:0">×</button></span>
                   </sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{ jobScored }}">
+                <div style="margin-top:14px;border:1px solid oklch(0.88 0.05 292);background:linear-gradient(180deg,var(--brand-soft),white);border-radius:12px;padding:13px 15px;display:flex;align-items:center;gap:13px;flex-wrap:wrap">
+                  <span style="flex:1;min-width:230px;font-size:12.5px;font-weight:600;text-wrap:pretty">This job has {{ scoredCount }} previously scored candidates. Upload more resumes or continue with existing results.</span>
+                  <button onClick="{{ goResults }}" style="flex:none;height:32px;padding:0 13px;border:0;border-radius:8px;background:var(--brand);color:white;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap" style-hover="filter:brightness(1.08)">View results</button>
                 </div>
               </sc-if>
               <div style="display:flex;align-items:center;gap:11px;margin-top:15px;flex-wrap:wrap">
@@ -1053,6 +1142,32 @@ input,button,textarea,select{font-family:inherit}
               </div>
             </sc-if>
             <div style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:20px">
+              <h3 style="margin:0 0 4px;font-family:Sora,sans-serif;font-size:15px;font-weight:600">Assignment</h3>
+              <p style="margin:0 0 13px;font-size:11.5px;font-weight:600;color:{{ job.trailFg }}">{{ job.trail }}</p>
+              <sc-if value="{{ job.canAssignLead }}">
+                <label style="display:flex;flex-direction:column;gap:6px">
+                  <span style="font-size:11.5px;font-weight:600">Assigned Team Lead</span>
+                  <select value="{{ job.leadName }}" onChange="{{ job.onLead }}" style="height:36px;border:1px solid var(--line);border-radius:9px;background:white;color:var(--ink);font-size:12.5px;font-weight:600;padding:0 8px;cursor:pointer">
+                    <sc-for list="{{ job.leadOptions }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}">{{ o.label }}</option></sc-for>
+                  </select>
+                </label>
+              </sc-if>
+              <sc-if value="{{ job.canAssignRec }}">
+                <label style="display:flex;flex-direction:column;gap:6px;margin-top:11px">
+                  <span style="font-size:11.5px;font-weight:600">Assigned Recruiter</span>
+                  <select value="{{ job.recName }}" onChange="{{ job.onRec }}" style="height:36px;border:1px solid var(--line);border-radius:9px;background:white;color:var(--ink);font-size:12.5px;font-weight:600;padding:0 8px;cursor:pointer">
+                    <sc-for list="{{ job.recOptions }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}">{{ o.label }}</option></sc-for>
+                  </select>
+                </label>
+              </sc-if>
+              <sc-if value="{{ job.recBlocked }}">
+                <div style="font-size:11.5px;color:var(--muted-ink);margin-top:10px;line-height:1.5">Assign a Team Lead first — the lead then picks the recruiter.</div>
+              </sc-if>
+              <sc-if value="{{ assignReadOnly }}">
+                <div style="font-size:11.5px;color:var(--muted-ink);margin-top:4px;line-height:1.5">Assignments are set by your Team Lead and Team Manager.</div>
+              </sc-if>
+            </div>
+            <div style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:20px">
               <h3 style="margin:0 0 13px;font-family:Sora,sans-serif;font-size:15px;font-weight:600">Job facts</h3>
               <div style="display:flex;flex-direction:column;gap:11px">
                 <sc-for list="{{ jobFacts }}" as="f" hint-placeholder-count="6">
@@ -1063,6 +1178,210 @@ input,button,textarea,select{font-family:inherit}
                 </sc-for>
               </div>
               <button onClick="{{ goBoard }}" style="width:100%;height:36px;margin-top:15px;border:1px solid var(--line);border-radius:9px;background:white;color:var(--ink);font-size:12.5px;font-weight:600;cursor:pointer" style-hover="background:var(--muted)">Open stage board</button>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ SCORE RESULTS ============ -->
+      <sc-if value="{{ isResults }}">
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div style="border:1px solid oklch(0.88 0.05 292);background:linear-gradient(180deg,var(--brand-soft),white);box-shadow:var(--card-sh);border-radius:16px;padding:18px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+            <div style="flex:1;min-width:280px;font-size:13px;font-weight:600;text-wrap:pretty">This job has {{ resTotal }} previously scored candidates. Upload more resumes or continue with existing results.</div>
+            <div style="flex:none;display:flex;gap:9px;flex-wrap:wrap">
+              <button onClick="{{ backToJob }}" style="height:36px;padding:0 15px;border:1px solid var(--line);border-radius:9px;background:white;color:var(--ink);font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap" style-hover="background:var(--muted)">Upload more resumes</button>
+
+            </div>
+          </div>
+
+          <div style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:22px">
+            <div style="display:flex;align-items:center;gap:26px;flex-wrap:wrap">
+              <div style="flex:1;min-width:280px">
+                <div style="font-family:Sora,sans-serif;font-size:17px;font-weight:600;letter-spacing:-0.01em">Cutoff: {{ cutoff }}%</div>
+                <input type="range" min="40" max="99" value="{{ cutoff }}" onChange="{{ onCutoff }}" onInput="{{ onCutoff }}" style="width:100%;margin-top:14px;accent-color:oklch(0.47 0.245 292)" />
+                <div style="display:flex;align-items:center;gap:18px;margin-top:12px;flex-wrap:wrap">
+                  <span style="display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:var(--success);white-space:nowrap"><span style="width:8px;height:8px;border-radius:999px;background:var(--success)"></span>Above cutoff ({{ resAbove }})</span>
+                  <span style="display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:var(--muted-ink);white-space:nowrap"><span style="width:8px;height:8px;border-radius:999px;background:oklch(0.82 0.02 292)"></span>Below cutoff ({{ resBelow }})</span>
+                </div>
+              </div>
+              <div style="flex:none;display:flex;flex-direction:column;gap:9px;min-width:280px">
+                <button onClick="{{ moveAboveCutoff }}" style="height:48px;padding:0 22px;border:0;border-radius:11px;background:linear-gradient(120deg,oklch(0.47 0.245 292) 0%,oklch(0.7 0.16 292) 52%,oklch(0.82 0.14 70) 100%);color:white;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 12px 28px oklch(0.47 0.245 292 / .3);white-space:nowrap" style-hover="filter:brightness(1.06)">{{ moveLabel }}</button>
+                <span style="font-size:11.5px;color:var(--muted-ink);text-align:center">Below-cutoff candidates stay in this results list.</span>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:11px;margin-top:18px;padding-top:15px;border-top:1px solid var(--line);flex-wrap:wrap">
+              <span style="font-size:11.5px;color:var(--muted-ink);white-space:nowrap">{{ piNote }}</span>
+              <div style="flex:1"></div>
+              <sc-if value="{{ hasResSel }}">
+                <span style="font-size:11.5px;font-weight:600;color:var(--brand);white-space:nowrap">Manual override · {{ resSelCount }} ticked</span>
+                <button onClick="{{ shortlistSelected }}" style="height:32px;padding:0 13px;border:1px solid oklch(0.88 0.05 292);border-radius:9px;background:white;color:var(--brand);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap" style-hover="background:var(--muted)">Qualify ticked instead</button>
+              </sc-if>
+              <sc-if value="{{ noResSel }}">
+                <span style="font-size:11.5px;color:var(--muted-ink);white-space:nowrap">Tick rows only if you need to override the cutoff group.</span>
+              </sc-if>
+            </div>
+          </div>
+
+          <div style="border:1px solid var(--line);background:white;box-shadow:var(--card-sh);border-radius:16px;overflow:hidden">
+            <sc-for list="{{ resRows }}" as="r" hint-placeholder-count="8">
+              <div style="border-bottom:1px solid var(--line);background:{{ r.rowBg }}">
+                <div style="display:flex;align-items:center;gap:14px;padding:14px 18px;opacity:{{ r.rowOpacity }};flex-wrap:wrap" style-hover="background:oklch(0.97 0.015 292)">
+                  <input type="checkbox" checked="{{ r.checked }}" onChange="{{ r.toggle }}" style="flex:none;width:15px;height:15px;accent-color:oklch(0.47 0.245 292);cursor:pointer" />
+                  <span style="flex:none;display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;border:1px solid {{ r.border }};background:{{ r.bg }};color:{{ r.fg }};font-family:Sora,sans-serif;font-size:14px;font-weight:700">{{ r.score }}</span>
+                  <div onClick="{{ r.open }}" style="flex:1;min-width:170px;cursor:pointer">
+                    <div style="font-size:13.5px;font-weight:600">{{ r.name }}</div>
+                    <div style="font-size:11px;color:var(--muted-ink);margin-top:3px;font-family:ui-monospace,monospace">{{ r.contact }}</div>
+                  </div>
+                  <div style="flex:none;display:flex;gap:12px;flex-wrap:wrap">
+                    <sc-for list="{{ r.dims }}" as="d" hint-placeholder-count="4">
+                      <div style="width:66px">
+                        <div style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted-ink);margin-bottom:4px"><span>{{ d.k }}</span><span style="font-weight:600;color:var(--ink)">{{ d.v }}</span></div>
+                        <div style="height:5px;border-radius:999px;background:var(--muted);overflow:hidden"><div style="height:100%;width:{{ d.width }};background:{{ d.color }};border-radius:999px"></div></div>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <span style="flex:none;display:inline-flex;border-radius:7px;border:1px solid {{ r.cutBorder }};background:{{ r.cutBg }};color:{{ r.cutFg }};padding:3px 9px;font-size:11px;font-weight:700;white-space:nowrap">{{ r.cutLabel }}</span>
+                  <span style="flex:none;display:inline-flex;border-radius:7px;border:1px solid oklch(0.88 0.06 65);background:oklch(0.67 0.17 65 / .13);color:oklch(0.45 0.13 65);padding:3px 9px;font-size:11px;font-weight:700;white-space:nowrap">{{ r.gapLabel }}</span>
+                  <div style="flex:none;display:flex;gap:6px">
+                    <sc-for list="{{ r.actions }}" as="a" hint-placeholder-count="3">
+                      <button onClick="{{ a.click }}" title="{{ a.title }}" style="width:30px;height:30px;border:1px solid {{ a.border }};border-radius:8px;background:{{ a.bg }};color:{{ a.fg }};font-size:12.5px;cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="filter:brightness(0.97)">{{ a.icon }}</button>
+                    </sc-for>
+                  </div>
+                  <button onClick="{{ r.toggleExpand }}" title="Show gaps" style="flex:none;width:30px;height:30px;border:1px solid var(--line);border-radius:8px;background:white;color:var(--brand);font-size:15px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:var(--muted)">{{ r.chevron }}</button>
+                </div>
+                <sc-if value="{{ r.expanded }}">
+                  <div style="padding:0 18px 16px 74px;animation:rcIn .14s ease">
+                    <div style="border:1px solid var(--line);background:oklch(0.99 0.008 292);border-radius:11px;padding:14px">
+                      <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.45 0.13 65)">Gaps to verify</div>
+                      <ul style="margin:10px 0 0;padding-left:17px;display:flex;flex-direction:column;gap:6px;font-size:12px;line-height:1.5">
+                        <sc-for list="{{ r.gapList }}" as="g" hint-placeholder-count="2"><li>{{ g }}</li></sc-for>
+                      </ul>
+                    </div>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ REVIEW DESK ============ -->
+      <sc-if value="{{ isReviewDesk }}">
+        <div style="display:grid;grid-template-columns:206px minmax(0,1fr);gap:16px;align-items:start">
+          <div style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:14px;position:sticky;top:86px">
+            <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-ink)">To review</div>
+            <div style="display:flex;gap:7px;margin-top:9px;flex-wrap:wrap">
+              <span style="display:inline-flex;border-radius:6px;border:1px solid oklch(0.88 0.06 65);background:oklch(0.67 0.17 65 / .13);color:oklch(0.45 0.13 65);padding:2px 8px;font-size:10.5px;font-weight:700;white-space:nowrap">{{ reviewPending }} pending</span>
+              <span style="display:inline-flex;border-radius:6px;border:1px solid oklch(0.85 0.08 145);background:oklch(0.58 0.18 145 / .12);color:var(--success);padding:2px 8px;font-size:10.5px;font-weight:700;white-space:nowrap">{{ reviewDoneCount }} done</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:3px;margin-top:13px">
+              <sc-for list="{{ reviewRail }}" as="c" hint-placeholder-count="3">
+                <button onClick="{{ c.pick }}" style="display:flex;align-items:center;gap:9px;border:0;border-radius:10px;padding:9px 10px;background:{{ c.bg }};color:{{ c.fg }};cursor:pointer;text-align:left" style-hover="background:var(--muted)">
+                  <span style="flex:none;width:26px;height:26px;border-radius:8px;background:var(--brand-soft);color:var(--brand);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">{{ c.initials }}</span>
+                  <span style="flex:1;min-width:0;font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.name }}</span>
+                  <span style="flex:none;font-size:10px;font-weight:700;color:{{ c.stateFg }};white-space:nowrap">{{ c.stateLabel }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px;align-items:start">
+              <div style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:18px">
+                <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+                  <h3 style="margin:0;font-family:Sora,sans-serif;font-size:14px;font-weight:600">Original</h3>
+                  <span style="font-size:11px;color:var(--muted-ink);white-space:nowrap">{{ mappedCount }} mapped · {{ unmappedCount }} unmapped</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:9px;margin-top:14px">
+                  <sc-for list="{{ originalSections }}" as="s" hint-placeholder-count="6">
+                    <div style="border:1px solid var(--line);background:white;border-radius:11px;padding:11px 12px">
+                      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                        <span style="flex:1;min-width:110px;font-size:12px;font-weight:600">{{ s.name }}</span>
+                        <span style="flex:none;display:inline-flex;border-radius:6px;border:1px solid {{ s.tagBorder }};background:{{ s.tagBg }};color:{{ s.tagFg }};padding:1px 7px;font-size:10px;font-weight:700;white-space:nowrap">{{ s.tag }}</span>
+                      </div>
+                      <div style="font-size:11.5px;color:var(--muted-ink);line-height:1.5;margin-top:7px">{{ s.preview }}</div>
+                      <button onClick="{{ s.toggle }}" style="margin-top:7px;border:0;background:transparent;padding:0;color:var(--brand);font-size:11px;font-weight:600;cursor:pointer">{{ s.linkLabel }}</button>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:18px">
+                <h3 style="margin:0;font-family:Sora,sans-serif;font-size:14px;font-weight:600">Resolve</h3>
+                <div style="margin-top:13px;border:1px solid oklch(0.88 0.05 292);background:linear-gradient(180deg,var(--brand-soft),white);border-radius:11px;padding:13px">
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <span style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:2px 6px;border-radius:5px;background:var(--brand);color:white">Mapping</span>
+                    <span style="font-size:11px;color:var(--muted-ink)">Template: {{ reviewTplName }}</span>
+                  </div>
+                  <div style="font-size:12.5px;font-weight:600;margin-top:10px;line-height:1.5;text-wrap:pretty">{{ resolveSummary }}</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;margin-top:16px;flex-wrap:wrap">
+                  <span style="font-size:12px;font-weight:600">Action items</span>
+                  <span style="display:inline-flex;border-radius:6px;border:1px solid var(--line);background:var(--muted);color:var(--muted-ink);padding:1px 7px;font-size:10px;font-weight:700;white-space:nowrap">internal only</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:8px;margin-top:11px">
+                  <sc-for list="{{ actionItems }}" as="a" hint-placeholder-count="4">
+                    <button onClick="{{ a.toggle }}" style="display:flex;align-items:flex-start;gap:10px;border:1px solid var(--line);background:white;border-radius:11px;padding:11px 12px;cursor:pointer;text-align:left" style-hover="border-color:var(--ring)">
+                      <span style="flex:none;width:17px;height:17px;border-radius:5px;border:1px solid {{ a.markBorder }};background:{{ a.markBg }};color:{{ a.markFg }};font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px">{{ a.mark }}</span>
+                      <span style="flex:1;font-size:11.5px;line-height:1.5;color:{{ a.textFg }};text-decoration:{{ a.decoration }}">{{ a.text }}</span>
+                    </button>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:18px">
+                <div style="display:flex;align-items:flex-start;gap:12px">
+                  <h3 style="flex:1;margin:0;font-family:Sora,sans-serif;font-size:14px;font-weight:600">Crafted</h3>
+                  <div style="flex:none;width:56px;height:56px;border-radius:999px;background:{{ reviewRing }};display:flex;align-items:center;justify-content:center">
+                    <div style="width:44px;height:44px;border-radius:999px;background:white;display:flex;flex-direction:column;align-items:center;justify-content:center">
+                      <div style="font-family:Sora,sans-serif;font-size:14px;font-weight:700;color:{{ reviewScoreFg }};line-height:1">{{ reviewScore }}</div>
+                      <div style="font-size:8px;color:var(--muted-ink)">/100%</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:13px;padding:8px;border:1px solid var(--line);background:white;border-radius:10px">
+                  <sc-for list="{{ toolbar }}" as="t" hint-placeholder-count="5">
+                    <button onClick="{{ t.click }}" style="width:26px;height:26px;border:1px solid var(--line);border-radius:7px;background:{{ t.bg }};color:var(--ink);font-size:11.5px;font-weight:{{ t.weight }};font-style:{{ t.style }};text-decoration:{{ t.deco }};cursor:pointer" style-hover="background:var(--muted)">{{ t.label }}</button>
+                  </sc-for>
+                  <span style="width:1px;background:var(--line);margin:0 3px"></span>
+                  <sc-for list="{{ toolbar2 }}" as="t" hint-placeholder-count="6">
+                    <button onClick="{{ t.click }}" style="height:26px;padding:0 8px;border:1px solid var(--line);border-radius:7px;background:white;color:var(--muted-ink);font-size:10.5px;font-weight:600;cursor:pointer;white-space:nowrap" style-hover="background:var(--muted);color:var(--ink)">{{ t.label }}</button>
+                  </sc-for>
+                </div>
+
+                <div style="margin-top:13px;border:1px solid var(--line);border-radius:12px;background:white;overflow:hidden">
+                  <div style="padding:13px 15px;background:linear-gradient(120deg,oklch(0.47 0.245 292) 0%,oklch(0.7 0.16 292) 52%,oklch(0.82 0.14 70) 100%);color:white">
+                    <div style="font-family:Sora,sans-serif;font-size:15px;font-weight:700">{{ craftHeader.name }}</div>
+                    <div style="font-size:10.5px;opacity:.9;margin-top:3px;font-family:ui-monospace,monospace">{{ craftHeader.phone }} · {{ craftHeader.email }}</div>
+                    <div style="font-size:10px;opacity:.8;margin-top:5px">{{ craftHeader.company }} · {{ craftHeader.tagline }}</div>
+                  </div>
+                  <div style="padding:14px 15px;display:flex;flex-direction:column;gap:15px">
+                    <sc-for list="{{ craftSections }}" as="s" hint-placeholder-count="4">
+                      <div>
+                        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--brand)">{{ s.name }}</div>
+                        <div style="display:flex;flex-direction:column;gap:7px;margin-top:9px">
+                          <sc-for list="{{ s.bullets }}" as="b" hint-placeholder-count="3">
+                            <div style="display:flex;align-items:flex-start;gap:8px">
+                              <span style="flex:none;width:4px;height:4px;border-radius:999px;background:var(--brand);margin-top:7px"></span>
+                              <span style="flex:1;font-size:11.5px;line-height:1.55">{{ b.text }}</span>
+                              <button onClick="{{ b.remove }}" title="Remove bullet" style="flex:none;width:20px;height:20px;border:1px solid var(--line);border-radius:6px;background:white;color:var(--muted-ink);font-size:11px;cursor:pointer" style-hover="color:var(--error);border-color:oklch(0.9 0.06 25)">×</button>
+                            </div>
+                          </sc-for>
+                          <button onClick="{{ s.addBullet }}" style="align-self:flex-start;height:26px;padding:0 9px;border:1px dashed oklch(0.85 0.05 292);border-radius:7px;background:var(--brand-soft);color:var(--brand);font-size:11px;font-weight:600;cursor:pointer" style-hover="filter:brightness(0.98)">+ Add bullet</button>
+                        </div>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:15px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+              <span style="font-size:12px;color:var(--muted-ink)">{{ reviewName }} · {{ reviewRole }}</span>
+              <div style="flex:1"></div>
+              <button onClick="{{ saveLater }}" style="height:36px;padding:0 15px;border:1px solid var(--line);border-radius:9px;background:white;color:var(--ink);font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap" style-hover="background:var(--muted)">Save and continue later</button>
+              <button onClick="{{ markReviewed }}" style="height:36px;padding:0 17px;border:0;border-radius:9px;background:linear-gradient(120deg,oklch(0.47 0.245 292) 0%,oklch(0.7 0.16 292) 52%,oklch(0.82 0.14 70) 100%);color:white;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap" style-hover="filter:brightness(1.06)">✓ Reviewed</button>
             </div>
           </div>
         </div>
@@ -1130,6 +1449,13 @@ input,button,textarea,select{font-family:inherit}
                 <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;font-weight:600">Job title <span style="color:var(--error)">*</span></span><input value="{{ newTitle }}" onChange="{{ onNewTitle }}" placeholder="e.g. Senior Backend Engineer" style="height:38px;border:1px solid var(--line);border-radius:9px;padding:0 11px;font-size:13px;background:white;color:var(--ink)" /></label>
                 <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;font-weight:600">Min experience (yrs)</span><input type="number" value="{{ wMin }}" onChange="{{ onWMin }}" style="height:38px;border:1px solid var(--line);border-radius:9px;padding:0 11px;font-size:13px;background:white;color:var(--ink)" /></label>
                 <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;font-weight:600">Max experience (yrs)</span><input type="number" value="{{ wMax }}" onChange="{{ onWMax }}" style="height:38px;border:1px solid var(--line);border-radius:9px;padding:0 11px;font-size:13px;background:white;color:var(--ink)" /></label>
+                <sc-if value="{{ canAssignOnCreate }}">
+                  <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;font-weight:600">Assigned Team Lead</span>
+                    <select value="{{ newLead }}" onChange="{{ onNewLead }}" style="height:38px;border:1px solid var(--line);border-radius:9px;padding:0 9px;font-size:13px;background:white;color:var(--ink);cursor:pointer">
+                      <sc-for list="{{ leadChoices }}" as="l" hint-placeholder-count="3"><option value="{{ l.id }}">{{ l.label }}</option></sc-for>
+                    </select>
+                  </label>
+                </sc-if>
                 <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;font-weight:600">Minimum qualification</span>
                   <select value="{{ wQual }}" onChange="{{ onWQual }}" style="height:38px;border:1px solid var(--line);border-radius:9px;padding:0 9px;font-size:13px;background:white;color:var(--ink);cursor:pointer">
                     <sc-for list="{{ quals }}" as="q" hint-placeholder-count="4"><option value="{{ q }}">{{ q }}</option></sc-for>
@@ -1147,20 +1473,13 @@ input,button,textarea,select{font-family:inherit}
                 <button onClick="{{ extractKeywords }}" style="height:36px;padding:0 15px;border:0;border-radius:9px;background:var(--brand);color:white;font-size:12.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;white-space:nowrap" style-hover="filter:brightness(1.08)"><span style="font-size:10px;font-weight:700;letter-spacing:.1em;padding:1px 5px;border-radius:4px;background:oklch(1 0 0 / .22)">AI</span>Extract Keywords</button>
                 <button onClick="{{ generateJd }}" style="height:36px;padding:0 15px;border:1px solid var(--line);border-radius:9px;background:white;color:var(--ink);font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap" style-hover="background:var(--muted)">Draft a JD for me</button>
               </div>
-              <sc-if value="{{ hasKeywords }}">
-                <div style="margin-top:14px;border:1px solid oklch(0.88 0.05 292);background:linear-gradient(180deg,var(--brand-soft),white);border-radius:13px;padding:15px;animation:rcIn .16s ease">
-                  <div style="font-size:12.5px;font-weight:600">{{ keywordCount }} found — remove any you don't want, then add to skills</div>
-                  <div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:12px">
-                    <sc-for list="{{ keywords }}" as="k" hint-placeholder-count="6">
-                      <span style="display:inline-flex;align-items:center;gap:7px;border:1px solid oklch(0.88 0.05 292);background:white;color:var(--brand);border-radius:999px;padding:4px 10px;font-size:11.5px;font-weight:600;white-space:nowrap">{{ k.name }}<button onClick="{{ k.remove }}" style="border:0;background:transparent;color:var(--muted-ink);cursor:pointer;font-size:12px;padding:0;line-height:1">×</button></span>
-                    </sc-for>
-                  </div>
-                  <button onClick="{{ addKeywords }}" style="height:34px;margin-top:14px;padding:0 15px;border:0;border-radius:9px;background:var(--brand);color:white;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap" style-hover="filter:brightness(1.08)">→ Add {{ keywordCount }} to Required Skills</button>
-                </div>
+              <sc-if value="{{ notExtracted }}">
+                <div style="margin-top:13px;font-size:11.5px;color:var(--muted-ink);background:var(--muted);border:1px solid var(--line);border-radius:9px;padding:11px 13px">Required skills and {{ dbName }} matches appear once you extract keywords — the skills come from the JD.</div>
               </sc-if>
             </div>
 
-            <div style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:20px">
+            <sc-if value="{{ extracted }}">
+            <div style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:20px;animation:rcIn .18s ease">
               <h3 style="margin:0 0 4px;font-family:Sora,sans-serif;font-size:15px;font-weight:600">Required skills</h3>
               <p style="margin:0 0 14px;font-size:12px;color:var(--muted-ink)">Set importance for each skill. Missing Must Have skills significantly reduce the technical score.</p>
               <div style="display:flex;gap:9px;flex-wrap:wrap">
@@ -1193,6 +1512,26 @@ input,button,textarea,select{font-family:inherit}
             </div>
 
             <div style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:20px">
+              <h3 style="margin:0 0 4px;font-family:Sora,sans-serif;font-size:15px;font-weight:600">Craft template</h3>
+              <p style="margin:0 0 14px;font-size:12px;color:var(--muted-ink)">The Review Desk builds every crafted CV on this structure. Lock it so recruiters can't change it mid-role.</p>
+              <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap">
+                <label style="flex:1;min-width:210px;display:flex;flex-direction:column;gap:6px"><span style="font-size:11.5px;font-weight:600">Template</span>
+                  <select value="{{ craftTpl }}" onChange="{{ onCraftTpl }}" style="height:38px;border:1px solid var(--line);border-radius:9px;padding:0 9px;font-size:13px;background:white;color:var(--ink);cursor:pointer">
+                    <sc-for list="{{ craftTemplates }}" as="t" hint-placeholder-count="3"><option value="{{ t.id }}">{{ t.label }}</option></sc-for>
+                  </select>
+                </label>
+                <div style="flex:none;display:flex;align-items:center;gap:10px;height:38px">
+                  <span style="font-size:12px;font-weight:600;white-space:nowrap">Lock for this job</span>
+                  <button onClick="{{ toggleCraftLock }}" role="switch" style="position:relative;width:42px;height:23px;border-radius:999px;border:0;cursor:pointer;background:{{ craftLockTrack }};transition:background .18s">
+                    <span style="position:absolute;top:3px;left:{{ craftLockKnob }};width:17px;height:17px;border-radius:999px;background:white;box-shadow:0 2px 6px oklch(0.3 0.06 292 / .3);transition:left .18s"></span>
+                  </button>
+                </div>
+              </div>
+              <div style="font-size:11.5px;color:var(--muted-ink);margin-top:11px">Sections: {{ craftTplSections }}</div>
+            </div>
+            </sc-if>
+
+            <div style="border:1px solid var(--line);background:var(--card-bg);box-shadow:var(--card-sh);border-radius:16px;padding:20px">
               <div style="display:flex;align-items:baseline;gap:9px;flex-wrap:wrap">
                 <h3 style="margin:0;font-family:Sora,sans-serif;font-size:15px;font-weight:600">Custom AI instructions</h3>
                 <span style="font-size:11.5px;color:var(--muted-ink)">optional</span>
@@ -1206,8 +1545,8 @@ input,button,textarea,select{font-family:inherit}
             </div>
           </div>
           <div style="display:flex;flex-direction:column;gap:16px">
-            <sc-if value="{{ modVault }}">
-              <div style="border:1px solid oklch(0.88 0.05 292);background:linear-gradient(180deg,var(--brand-soft),white);box-shadow:var(--card-sh);border-radius:16px;padding:20px">
+            <sc-if value="{{ vaultPanel }}">
+              <div style="border:1px solid oklch(0.88 0.05 292);background:linear-gradient(180deg,var(--brand-soft),white);box-shadow:var(--card-sh);border-radius:16px;padding:20px;animation:rcIn .18s ease">
                 <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--brand)">{{ dbName }}</div>
                 <div style="font-family:Sora,sans-serif;font-size:34px;font-weight:700;color:var(--brand);margin-top:10px;letter-spacing:-0.02em">{{ vaultMatches }}</div>
                 <div style="font-size:12.5px;font-weight:600;margin-top:4px">matching candidates in your {{ dbName }}</div>
@@ -1668,33 +2007,83 @@ const ORGS = [
 ];
 const PLANS = ["Starter", "Growth", "Enterprise"];
 const PERSONAS = { super: "Sunanda B", admin: "Neha A", manager: "Poojitha P", lead: "Jaime", recruiter: "Sana Iqbal" };
+const CRAFT_TEMPLATES = [
+  { id: "exec", name: "Executive one-pager", sections: ["Executive Summary", "Core Competencies", "Employment & Projects", "Education"] },
+  { id: "tech", name: "Technical deep-dive", sections: ["Executive Summary", "Technical Skills", "Employment & Projects", "Certifications", "Education"] },
+  { id: "client", name: "Client submission (masked)", sections: ["Candidate Snapshot", "Employment & Projects", "Skills", "Availability"] }
+];
+const ORIGINAL_SECTIONS = [
+  { name: "Contact details", mapped: true, preview: "Priya Raman · Dubai, UAE · +971 5• ••• 4412 · priya.raman@example.com" },
+  { name: "Professional summary", mapped: true, preview: "Backend engineer with 8 years building distributed services; led a 40-service migration to Kubernetes at Talos Systems." },
+  { name: "Experience — Talos Systems", mapped: true, preview: "Staff Backend Engineer, 2021–present. Owned platform migration, cut p95 latency 38%, mentored 4 engineers." },
+  { name: "Experience — Fintrail", mapped: true, preview: "Senior Backend Engineer, 2018–2021. Built a payment ledger in Go handling 2M daily transactions." },
+  { name: "Skills", mapped: true, preview: "Go, Kubernetes, Postgres, gRPC, AWS, Terraform, Redis, observability tooling." },
+  { name: "Education", mapped: true, preview: "B.E. Computer Science, BMS College of Engineering, 2016." },
+  { name: "Certifications", mapped: false, preview: "CKA — Certified Kubernetes Administrator (expiry not stated)." },
+  { name: "Personal interests", mapped: false, preview: "Long-distance running, open-source contribution, mentoring at a local bootcamp." }
+];
+const CRAFT_CONTENT = {
+  "Executive Summary": ["Backend engineer with 8 years building and running distributed services at scale.", "Led a 40-service migration to Kubernetes, cutting p95 latency 38%.", "Deep Postgres performance ownership under production load."],
+  "Core Competencies": ["Distributed systems design · Go, gRPC", "Container platform ownership · Kubernetes, Terraform", "Data layer performance · Postgres, Redis"],
+  "Technical Skills": ["Languages: Go, Python, Java", "Platform: Kubernetes, Terraform, AWS", "Data: Postgres, Redis, Kafka (exposure)"],
+  "Candidate Snapshot": ["8 years backend experience · Dubai-based, hybrid", "Available in 30 days · expects AED 34k / month", "Match score 92 against the role's must-have skills"],
+  "Employment & Projects": ["Talos Systems — Staff Backend Engineer (2021–present): owned the Kubernetes platform migration across 40 services.", "Fintrail — Senior Backend Engineer (2018–2021): built a Go payment ledger handling 2M daily transactions.", "Zerobase — Backend Engineer (2016–2018): Python services and Postgres schema design for logistics."],
+  "Certifications": ["CKA — Certified Kubernetes Administrator (expiry to verify)"],
+  "Skills": ["Go · Kubernetes · Postgres · gRPC · AWS · Terraform"],
+  "Availability": ["Notice period: 30 days", "Work mode: hybrid, Dubai"],
+  "Education": ["B.E. Computer Science — BMS College of Engineering, 2016"]
+};
+const ACTION_ITEMS = [
+  "Notice period not mentioned on the CV — confirmed as 30 days in screening.",
+  "Verify CKA certification expiry before client submission.",
+  "Kafka listed as exposure only — check against the 'Good to Have' weighting.",
+  "Personal interests section left out of the crafted output."
+];
+const TOOLBAR = ["B", "I", "U", "S", "H"];
+const TOOLBAR2 = ["Text style", "• List", "1. List", "Indent", "+ Section", "+ Bullet", "Size", "Colour", "Clear"];
 const STAGES = [
-  { id: "sourced", label: "Sourced", color: "var(--muted-ink)" },
-  { id: "resume", label: "Resume Score", color: "var(--c1)" },
+  { id: "qualified", label: "Qualified", color: "var(--c1)" },
   { id: "call", label: "Call", color: "var(--c2)" },
   { id: "video", label: "AI Video Interview", color: "var(--c3)" },
-  { id: "shortlisted", label: "Shortlisted", color: "var(--success)" }
+  { id: "shortlisted", label: "Shortlisted", color: "var(--success)" },
+  { id: "craft", label: "Craft", color: "oklch(0.72 0.15 55)" }
 ];
 const CANDIDATES = [
-  { name: "Priya Raman", role: "Senior Backend Engineer", job: "Senior Backend Engineer", score: 92, stage: "video", skills: ["Go", "Kubernetes", "Postgres"] },
+  { name: "Yara Haddad", role: "Senior Backend Engineer", job: "Senior Backend Engineer", score: 80, stage: "qualified", skills: ["Python", "Django", "Redis"] },
+  { name: "Tariq Nasser", role: "Senior Backend Engineer", job: "Senior Backend Engineer", score: 78, stage: "qualified", skills: ["Go", "Postgres", "Kubernetes"] },
+  { name: "Kwame Boateng", role: "Senior Backend Engineer", job: "Senior Backend Engineer", score: 76, stage: "qualified", skills: ["Node", "Postgres", "AWS"] },
+  { name: "Noor Siddiqui", role: "Senior Backend Engineer", job: "Senior Backend Engineer", score: 74, stage: "qualified", skills: ["Python", "Kubernetes", "Redis"] },
+  { name: "Samuel Okoye", role: "Senior Backend Engineer", job: "Senior Backend Engineer", score: 71, stage: "qualified", skills: ["Node", "MongoDB"] },
   { name: "Adnan Farouk", role: "Senior Backend Engineer", job: "Senior Backend Engineer", score: 88, stage: "call", skills: ["Go", "gRPC", "AWS"] },
+  { name: "Elena Duarte", role: "Senior Backend Engineer", job: "Senior Backend Engineer", score: 85, stage: "call", skills: ["Go", "gRPC", "Terraform"] },
+  { name: "Ana Petrova", role: "Senior Backend Engineer", job: "Senior Backend Engineer", score: 82, stage: "call", skills: ["Go", "Kafka", "Observability"] },
+  { name: "Daniel Osei", role: "Senior Backend Engineer", job: "Senior Backend Engineer", score: 79, stage: "call", skills: ["Java", "gRPC", "Redis"] },
+  { name: "Priya Raman", role: "Senior Backend Engineer", job: "Senior Backend Engineer", score: 92, stage: "video", skills: ["Go", "Kubernetes", "Postgres"] },
+  { name: "Huda Rahman", role: "Senior Backend Engineer", job: "Senior Backend Engineer", score: 86, stage: "video", skills: ["Go", "Postgres", "Terraform"] },
+  { name: "Marcus Feld", role: "Senior Backend Engineer", job: "Senior Backend Engineer", score: 83, stage: "video", skills: ["Python", "AWS", "Kubernetes"] },
+  { name: "Sofia Marino", role: "Senior Backend Engineer", job: "Senior Backend Engineer", score: 89, stage: "shortlisted", skills: ["Go", "Kubernetes", "gRPC"] },
   { name: "Mei Lin Chen", role: "Senior Backend Engineer", job: "Senior Backend Engineer", score: 84, stage: "shortlisted", skills: ["Java", "Kafka", "Postgres"] },
-  { name: "Yara Haddad", role: "Senior Backend Engineer", job: "Senior Backend Engineer", score: 74, stage: "resume", skills: ["Python", "Django", "Redis"] },
-  { name: "Samuel Okoye", role: "Senior Backend Engineer", job: "Senior Backend Engineer", score: 68, stage: "call", skills: ["Node", "MongoDB"] },
-  { name: "Lena Vogt", role: "Senior Backend Engineer", job: "Senior Backend Engineer", score: 61, stage: "sourced", skills: ["Ruby", "MySQL"] },
-  { name: "Karan Mehta", role: "Senior Backend Engineer", job: "Senior Backend Engineer", score: 54, stage: "sourced", skills: ["PHP", "Laravel"] },
-  { name: "Rohit Deshpande", role: "Platform Engineer", job: "DevOps Engineer", score: 79, stage: "resume", skills: ["Terraform", "AWS", "Go"] },
+  { name: "Leila Mansour", role: "Senior Backend Engineer", job: "Senior Backend Engineer", score: 91, stage: "craft", skills: ["Go", "Kubernetes", "Postgres"] },
+  { name: "Peter Ndlovu", role: "Product Designer", job: "Product Designer", score: 83, stage: "qualified", skills: ["Figma", "Design systems"] },
+  { name: "Hana Kim", role: "Product Designer", job: "Product Designer", score: 79, stage: "qualified", skills: ["Figma", "User research"] },
+  { name: "Omar Zaki", role: "Product Designer", job: "Product Designer", score: 76, stage: "call", skills: ["Figma", "Prototyping"] },
   { name: "Iris Nakamura", role: "Product Designer", job: "Product Designer", score: 86, stage: "video", skills: ["Figma", "Design systems"] },
-  { name: "Omar Zaki", role: "Product Designer", job: "Product Designer", score: 71, stage: "call", skills: ["Figma", "Prototyping"] },
-  { name: "Dana Rees", role: "Data Analyst", job: "Data Analyst", score: 81, stage: "resume", skills: ["SQL", "dbt", "Looker"] }
+  { name: "Lucas Braun", role: "Product Designer", job: "Product Designer", score: 88, stage: "shortlisted", skills: ["Figma", "Prototyping"] },
+  { name: "Joseph Lin", role: "Data Analyst", job: "Data Analyst", score: 78, stage: "qualified", skills: ["SQL", "dbt"] },
+  { name: "Dana Rees", role: "Data Analyst", job: "Data Analyst", score: 81, stage: "qualified", skills: ["SQL", "dbt", "Looker"] },
+  { name: "Amira Fahmy", role: "Data Analyst", job: "Data Analyst", score: 84, stage: "call", skills: ["SQL", "Python", "Looker"] },
+  { name: "Rohit Deshpande", role: "Platform Engineer", job: "DevOps Engineer", score: 79, stage: "qualified", skills: ["Terraform", "AWS", "Go"] },
+  { name: "Bilal Haq", role: "Platform Engineer", job: "DevOps Engineer", score: 85, stage: "call", skills: ["Terraform", "Kubernetes", "AWS"] },
+  { name: "Chloe Martin", role: "Platform Engineer", job: "DevOps Engineer", score: 81, stage: "video", skills: ["AWS", "Go", "CI/CD"] },
+  { name: "Farah Aziz", role: "Platform Engineer", job: "DevOps Engineer", score: 88, stage: "shortlisted", skills: ["Terraform", "Kubernetes", "Observability"] }
 ];
 const JOBS = [
-  { title: "Senior Backend Engineer", jobId: "JOB-1042", location: "Dubai, UAE", mode: "Hybrid", type: "Full-time", status: "Active", version: "v3", skillsCount: 9, scored: 122, crafted: 34, created: "12 Aug 2026", createdBy: "Nadia Sheikh", needsReview: true, applicants: 184, screened: 122, shortlisted: 18, vault: 412, owner: "Nadia Sheikh" },
-  { title: "Product Designer", jobId: "JOB-1039", location: "Remote", mode: "Remote", type: "Full-time", status: "Active", version: "v2", skillsCount: 7, scored: 71, crafted: 18, created: "04 Aug 2026", createdBy: "Nadia Sheikh", needsReview: false, applicants: 96, screened: 71, shortlisted: 12, vault: 168, owner: "Nadia Sheikh" },
-  { title: "Data Analyst", jobId: "JOB-1035", location: "Abu Dhabi, UAE", mode: "On-site", type: "Full-time", status: "Active", version: "", skillsCount: 8, scored: 88, crafted: 21, created: "28 Jul 2026", createdBy: "Vikram Sethi", needsReview: true, applicants: 142, screened: 88, shortlisted: 9, vault: 254, owner: "Vikram Sethi" },
-  { title: "DevOps Engineer", jobId: "JOB-1031", location: "Remote", mode: "Remote", type: "Contract", status: "Active", version: "v2", skillsCount: 10, scored: 60, crafted: 14, created: "19 Jul 2026", createdBy: "Vikram Sethi", needsReview: false, applicants: 77, screened: 60, shortlisted: 14, vault: 96, owner: "Vikram Sethi" },
-  { title: "Sales Development Rep", jobId: "JOB-1028", location: "Dubai, UAE", mode: "On-site", type: "Full-time", status: "Archived", version: "", skillsCount: 5, scored: 0, crafted: 0, created: "02 Jul 2026", createdBy: "Nadia Sheikh", needsReview: false, applicants: 0, screened: 0, shortlisted: 0, vault: 331, owner: "Nadia Sheikh" },
-  { title: "Finance Manager", jobId: "JOB-1019", location: "Riyadh, KSA", mode: "Hybrid", type: "Full-time", status: "Archived", version: "v4", skillsCount: 6, scored: 90, crafted: 12, created: "11 Jun 2026", createdBy: "Vikram Sethi", needsReview: false, applicants: 118, screened: 90, shortlisted: 7, vault: 74, owner: "Vikram Sethi" }
+  { title: "Senior Backend Engineer", jobId: "JOB-1042", location: "Dubai, UAE", mode: "Hybrid", type: "Full-time", status: "Active", version: "v3", skillsCount: 9, scored: 122, crafted: 34, created: "12 Aug 2026", createdBy: "Poojitha P", needsReview: true, applicants: 184, screened: 122, shortlisted: 18, vault: 412, owner: "Jaime" },
+  { title: "Product Designer", jobId: "JOB-1039", location: "Remote", mode: "Remote", type: "Full-time", status: "Active", version: "v2", skillsCount: 7, scored: 71, crafted: 18, created: "04 Aug 2026", createdBy: "Poojitha P", needsReview: false, applicants: 96, screened: 71, shortlisted: 12, vault: 168, owner: "Jaime" },
+  { title: "Data Analyst", jobId: "JOB-1035", location: "Abu Dhabi, UAE", mode: "On-site", type: "Full-time", status: "Active", version: "", skillsCount: 8, scored: 88, crafted: 21, created: "28 Jul 2026", createdBy: "Vikram Sethi", needsReview: true, applicants: 142, screened: 88, shortlisted: 9, vault: 254, owner: "Tom Abara" },
+  { title: "DevOps Engineer", jobId: "JOB-1031", location: "Remote", mode: "Remote", type: "Contract", status: "Active", version: "v2", skillsCount: 10, scored: 60, crafted: 14, created: "19 Jul 2026", createdBy: "Vikram Sethi", needsReview: false, applicants: 77, screened: 60, shortlisted: 14, vault: 96, owner: "Tom Abara" },
+  { title: "Sales Development Rep", jobId: "JOB-1028", location: "Dubai, UAE", mode: "On-site", type: "Full-time", status: "Archived", version: "", skillsCount: 5, scored: 0, crafted: 0, created: "02 Jul 2026", createdBy: "Poojitha P", needsReview: false, applicants: 0, screened: 0, shortlisted: 0, vault: 331, owner: "Jaime" },
+  { title: "Finance Manager", jobId: "JOB-1019", location: "Riyadh, KSA", mode: "Hybrid", type: "Full-time", status: "Archived", version: "v4", skillsCount: 6, scored: 90, crafted: 12, created: "11 Jun 2026", createdBy: "Vikram Sethi", needsReview: false, applicants: 118, screened: 90, shortlisted: 7, vault: 74, owner: "Tom Abara" }
 ];
 const BOARDS = ["LinkedIn", "Naukri Gulf", "Bayt"];
 const BOARD_LINKS = {
@@ -1721,36 +2110,38 @@ const ALIAS_BANK = {
   React: ["React.js", "ReactJS"], Node: ["Node.js", "NodeJS"]
 };
 const MEMBERS = [
-  { name: "Jamie Doe", email: "jamie@acme.com", role: "admin", reportsTo: "—" },
-  { name: "Rhea Kapoor", email: "rhea@acme.com", role: "manager", reportsTo: "Jamie Doe" },
-  { name: "Vikram Sethi", email: "vikram@acme.com", role: "manager", reportsTo: "Jamie Doe" },
-  { name: "Nadia Sheikh", email: "nadia@acme.com", role: "lead", reportsTo: "Rhea Kapoor" },
+  { name: "Neha A", email: "neha@acme.com", role: "admin", reportsTo: "—" },
+  { name: "Poojitha P", email: "poojitha@acme.com", role: "manager", reportsTo: "Neha A" },
+  { name: "Vikram Sethi", email: "vikram@acme.com", role: "manager", reportsTo: "Neha A" },
+  { name: "Jaime", email: "jaime@acme.com", role: "lead", reportsTo: "Poojitha P" },
   { name: "Tom Abara", email: "tom@acme.com", role: "lead", reportsTo: "Vikram Sethi" },
-  { name: "Sana Iqbal", email: "sana@acme.com", role: "recruiter", reportsTo: "Nadia Sheikh" },
-  { name: "Diego Ruiz", email: "diego@acme.com", role: "recruiter", reportsTo: "Nadia Sheikh" },
+  { name: "Sana Iqbal", email: "sana@acme.com", role: "recruiter", reportsTo: "Jaime" },
+  { name: "Diego Ruiz", email: "diego@acme.com", role: "recruiter", reportsTo: "Jaime" },
   { name: "Aisha Bello", email: "aisha@acme.com", role: "recruiter", reportsTo: "Tom Abara" }
 ];
 const ASSIGN = {
-  "Nadia Sheikh": [{ title: "Senior Backend Engineer", id: "JOB-1042" }, { title: "Product Designer", id: "JOB-1039" }],
+  "Jaime": [{ title: "Senior Backend Engineer", id: "JOB-1042" }, { title: "Product Designer", id: "JOB-1039" }],
   "Tom Abara": [{ title: "Data Analyst", id: "JOB-1035" }],
   "Sana Iqbal": [{ title: "Senior Backend Engineer", id: "JOB-1042" }],
   "Diego Ruiz": [{ title: "Product Designer", id: "JOB-1039" }, { title: "DevOps Engineer", id: "JOB-1031" }],
   "Aisha Bello": [{ title: "Data Analyst", id: "JOB-1035" }]
 };
 const TRANSITIONS = [
-  { id: "t1", from: "Sourced", to: "Resume Score", stage: "resume" },
-  { id: "t2", from: "Resume Score", to: "Call", stage: "call" },
+  { id: "t1", from: "Score cutoff", to: "Qualified", stage: "qualified" },
+  { id: "t2", from: "Qualified", to: "Call", stage: "call" },
   { id: "t3", from: "Call", to: "AI Video Interview", stage: "video" },
-  { id: "t4", from: "AI Video Interview", to: "Shortlisted", stage: "shortlisted" }
+  { id: "t4", from: "AI Video Interview", to: "Shortlisted", stage: "shortlisted" },
+  { id: "t5", from: "Shortlisted", to: "Craft", stage: "craft" }
 ];
 const STAGE_TEMPLATES = {
-  resume: { label: "Resume Score", subject: "We've received your application for {job_title}", body: "Hi {candidate_name},\n\nThanks for applying to {job_title} at {company_name}. Your CV is being scored against the role now — you'll hear from us shortly with next steps.\n\nBest,\n{recruiter_name}" },
+  qualified: { label: "Qualified", subject: "You're through the first round for {job_title}", body: "Hi {candidate_name},\n\nThanks for applying to {job_title} at {company_name}. Your CV scored above our bar for this role, so you're moving forward.\n\nA recruiter will be in touch shortly to arrange a short call.\n\nBest,\n{recruiter_name}" },
   call: { label: "Call", subject: "A quick call about {job_title}", body: "Hi {candidate_name},\n\nYour profile scored well for {job_title} at {company_name}. I'd like to set up a short call to talk through your experience, notice period and expectations.\n\nWhat times suit you this week?\n\nBest,\n{recruiter_name}" },
   video: { label: "AI Video Interview", subject: "Your video interview for {job_title}", body: "Hi {candidate_name},\n\nGreat speaking with you. The next step for {job_title} at {company_name} is a short recorded interview — around 12 minutes, taken whenever suits you.\n\nYour link is inside this email and stays open for 5 days.\n\nBest,\n{recruiter_name}" },
+  craft: { label: "Craft", subject: "Your profile is going to {company_name}'s hiring team", body: "Hi {candidate_name},\n\nWe're preparing your profile for the hiring team at {company_name} for the {job_title} role. No action needed from you right now.\n\nBest,\n{recruiter_name}" },
   shortlisted: { label: "Shortlisted", subject: "You've been shortlisted for {job_title}", body: "Hi {candidate_name},\n\nGood news — you've been shortlisted for {job_title} at {company_name}. The hiring team would like to meet you.\n\nI'll follow up with times shortly.\n\nBest,\n{recruiter_name}" }
 };
 const PERF = {
-  "Nadia Sheikh": { candidates: 96, calls: 41, shortlisted: 18, output: "112%" },
+  "Jaime": { candidates: 96, calls: 41, shortlisted: 18, output: "112%" },
   "Tom Abara": { candidates: 74, calls: 33, shortlisted: 12, output: "94%" },
   "Sana Iqbal": { candidates: 52, calls: 28, shortlisted: 9, output: "104%" },
   "Diego Ruiz": { candidates: 45, calls: 24, shortlisted: 8, output: "97%" },
@@ -1773,11 +2164,12 @@ const CAND_DETAIL = {
 const PLACEHOLDERS = ["{candidate_name}", "{job_title}", "{company_name}", "{recruiter_name}"];
 const SAMPLE = { "{candidate_name}": "Priya Raman", "{job_title}": "Senior Backend Engineer", "{company_name}": "Acme Inc.", "{recruiter_name}": "Jamie Doe" };
 const FUNNEL = [
-  { stage: "Sourced", count: 1284, conv: "", color: "var(--c1)" },
-  { stage: "Resume-scored", count: 792, conv: "62%", color: "oklch(0.55 0.22 292)" },
+  { stage: "Scored", count: 1284, conv: "", color: "var(--c1)" },
+  { stage: "Qualified", count: 792, conv: "62%", color: "oklch(0.55 0.22 292)" },
   { stage: "Called", count: 421, conv: "53%", color: "var(--c2)" },
   { stage: "Video interviewed", count: 168, conv: "40%", color: "var(--c3)" },
-  { stage: "Shortlisted", count: 61, conv: "36%", color: "var(--c4)" }
+  { stage: "Shortlisted", count: 61, conv: "36%", color: "var(--c4)" },
+  { stage: "Crafted", count: 44, conv: "72%", color: "var(--c5)" }
 ];
 const SOURCES = [
   { name: "Naukri Gulf", count: 486, rate: "22%", color: "var(--c1)" },
@@ -1813,14 +2205,23 @@ class Component extends DCLogic {
     workspace: "Acme Inc.", moduleClient: "Acme Inc.",
     modules: JSON.parse(JSON.stringify(CLIENT_MODULES)),
     section: "onboarding", tab: "Email", view: "kanban",
-    boardJob: "Senior Backend Engineer", callMode: "human",
+    boardJob: "Senior Backend Engineer", callMode: "human", cutoff: 70,
+    newLead: "",
+    assign: {
+      "Senior Backend Engineer": { lead: "Jaime", rec: "Sana Iqbal" },
+      "Product Designer": { lead: "Jaime", rec: "" },
+      "Data Analyst": { lead: "Tom Abara", rec: "Aisha Bello" },
+      "DevOps Engineer": { lead: "Jaime", rec: "Diego Ruiz" },
+      "Sales Development Rep": { lead: "", rec: "" },
+      "Finance Manager": { lead: "Tom Abara", rec: "" }
+    },
     cands: CANDIDATES.slice(),
     stages: CANDIDATES.reduce((a, c) => { a[c.name] = c.stage; return a; }, {}),
     notes: { "Adnan Farouk": ["Human call 12 Sep — 60-day notice, asked about visa sponsorship. Escalate to Nadia."] },
     noteFor: "", noteDraft: "", drag: "", toast: "",
     tiers: TIERS.reduce((a, t) => { a[t.id] = t.label; return a; }, {}),
     members: MEMBERS.slice(),
-    formName: "", formEmail: "", formRole: "recruiter", formManager: "Nadia Sheikh",
+    formName: "", formEmail: "", formRole: "recruiter", formManager: "Jaime",
     postings: JOBS.reduce((a, j) => { const on = j.status === "Active"; a[j.title] = { "LinkedIn": on ? "Posted" : "Not posted", "Naukri Gulf": on ? "Posted" : "Not posted", "Bayt": "Not posted" }; return a; }, {}),
     postMenu: "", newTitle: "Senior Backend Engineer",
     vaultSource: "Zoho Recruit API", vaultEndpoint: "https://api.acme.com/v2/candidates", dbName: "Vault",
@@ -1828,12 +2229,16 @@ class Component extends DCLogic {
     files: [], dbSel: {}, dbFrom: "jobs", scOpen: true, cqOpen: false,
     sc: { brand: true, company: "Acme Inc.", tagline: "Hiring, done properly." },
     cq: { company: "Acme Inc.", tagline: "Hiring, done properly.", email: "talent@acme.com", mask: true, header: true, footer: true },
-    wMin: 6, wMax: 12, wQual: "Bachelor's degree", wInstr: "", skillInput: "", kw: [], kwShown: false,
+    wMin: 6, wMax: 12, wQual: "Bachelor's degree", wInstr: "", skillInput: "", kw: [], kwShown: false, extracted: false,
+    craftTpl: "tech", craftLocked: false,
+    reviewCand: "Leila Mansour", reviewDone: {}, showFull: {}, checkedItems: {}, craftRemoved: {},
+    scoredJobs: { "Senior Backend Engineer": true }, cutMin: 40, cutMax: 100, resSel: {}, resExpand: "",
+    sel: {}, fBand: "All", fStage: "All", fRec: "All", fQuery: "", bulkStage: "call",
     wSkills: [{ name: "Go", imp: 0, aliases: [] }, { name: "Kubernetes", imp: 0, aliases: [] }, { name: "Postgres", imp: 0, aliases: [] }, { name: "gRPC", imp: 1, aliases: [] }, { name: "Kafka", imp: 1, aliases: [] }, { name: "Terraform", imp: 2, aliases: [] }],
     ivrProvider: "", ivrEndpoint: "", ivrCallerId: "+971 4 000 0000", ivrConnected: false,
     inboundDb: true,
-    trans: { t1: true, t2: true, t3: true, t4: true },
-    tplStage: "resume",
+    trans: { t1: true, t2: true, t3: true, t4: true, t5: false },
+    tplStage: "qualified",
     tpls: JSON.parse(JSON.stringify(STAGE_TEMPLATES)),
     levels: { Go: 0, Kubernetes: 0, Postgres: 0, gRPC: 1, Kafka: 1, Terraform: 2, Observability: 2 },
     jd: "We're hiring a Senior Backend Engineer to own the services behind Acme's core platform. You'll design and ship Go services on Kubernetes, tune Postgres under real load, and set the standard for reliability across the team.",
@@ -1869,6 +2274,11 @@ class Component extends DCLogic {
     return out.map((a) => ({ ...a, click: () => this.flash(a.msg) }));
   }
   setStage(name, id) {
+    const cur = this.state.stages[name];
+    if (id === "craft" && cur !== "shortlisted" && cur !== "craft") {
+      this.flash(name + " must be shortlisted before crafting");
+      return;
+    }
     this.setState({ stages: { ...this.state.stages, [name]: id } });
     const s = STAGES.find((x) => x.id === id);
     const t = TRANSITIONS.find((x) => x.stage === id);
@@ -1900,7 +2310,7 @@ class Component extends DCLogic {
       : [{ id: "dashboard", label: "Dashboard", icon: "▤" }, { id: "jobs", label: "Jobs", icon: "▢" }, { id: "board", label: "Candidates", icon: "◍" }, { id: "settings", label: "Settings", icon: "◇" }];
     let screen = st.screen;
     if (isRec && (screen === "dashboard" || screen === "newjob")) screen = "jobs";
-    if (isSuper && (screen === "jobs" || screen === "board" || screen === "newjob" || screen === "candidate" || screen === "job" || screen === "db")) screen = "dashboard";
+    if (isSuper && (screen === "jobs" || screen === "board" || screen === "newjob" || screen === "candidate" || screen === "job" || screen === "db" || screen === "results" || screen === "review")) screen = "dashboard";
     if (!isSuper && screen === "orgs") screen = "dashboard";
 
     const SCR = {
@@ -1914,21 +2324,44 @@ class Component extends DCLogic {
         : { crumb: "Jobs", eyebrow: "Workspace", title: "Jobs", desc: "Live pipeline, " + st.dbName + " matches and job-board posting status per role.", action: "New job" },
       newjob: { crumb: "Jobs / New", eyebrow: "Create job", title: "Job setup", desc: "Step 1 of 4 — define the role, extract keywords from the JD and weight every skill." },
       job: { crumb: "Jobs / " + st.activeJob, eyebrow: "Job", title: st.activeJob, desc: "Upload resumes to score against this role, post it to job boards, and set scorecard and CraftQ options for this job only." },
-      db: { crumb: "Jobs / " + st.activeJob + " / " + st.dbName, eyebrow: st.dbName, title: "Add from your " + st.dbName, desc: "Candidates synced from your connected database. Select the ones you want and pull them into this job's Sourced stage." },
-      board: { crumb: "Candidates", eyebrow: "Pipeline", title: "Stage board", desc: "Move candidates through Sourced → Resume Score → Call → AI Video Interview → Shortlisted." },
+      results: { crumb: "Jobs / " + st.activeJob + " / Score", eyebrow: "Step 2 · Score", title: "Score results", desc: "Drag the cutoff, then move everything above the line onto the board as Qualified in one click." },
+      review: { crumb: "Jobs / " + st.activeJob + " / Review desk", eyebrow: "Step 3 · Craft", title: "Review desk", desc: "AI crafted the resume from the original. Check the mapping, fix the bullets, then mark it reviewed." },
+      db: { crumb: "Jobs / " + st.activeJob + " / " + st.dbName, eyebrow: st.dbName, title: "Add from your " + st.dbName, desc: "Candidates synced from your connected database. Select the ones you want and pull them onto the board as Qualified." },
+      board: { crumb: "Candidates", eyebrow: "Pipeline", title: "Stage board", desc: "One pipeline: Qualified → Call → AI Video Interview → Shortlisted → Craft. Drag a card, use its dropdown, or select several and move them together." },
       candidate: { crumb: "Candidates / " + st.candidateName, eyebrow: "Candidate intelligence", title: st.candidateName, desc: "AI-assembled profile from CV, screening replies and interview. You make the call." },
       settings: { crumb: "Settings", eyebrow: "Settings", title: "Settings", desc: "Onboarding, integrations, automations, templates and module control in one hub." },
       orgs: { crumb: "Organizations", eyebrow: "Manage", title: "Client workspaces", desc: "Manage each client: its admins, plan and enabled modules. Platform-wide numbers live on the Platform screen.", action: "Create a new client workspace" }
     }[screen] || {};
 
     const CANDS = st.cands;
+    const RECRUITERS = ["Sana Iqbal", "Diego Ruiz", "Aisha Bello"];
+    const ownerOf = (n) => RECRUITERS[n.length % RECRUITERS.length];
+    const dims = (c) => {
+      const j = (n, off) => Math.max(42, Math.min(99, c.score + off + ((n.length * 5) % 9) - 4));
+      return [
+        { k: "Tech", v: j(c.name, 2) }, { k: "Exp", v: j(c.name + "e", -3) },
+        { k: "Edu", v: j(c.name + "d", -7) }, { k: "Stab", v: j(c.name + "s", 1) }
+      ];
+    };
+    const gapsOf = (c) => (c.score >= 85 ? 1 : c.score >= 70 ? 2 : 3);
+    const passes = (c) => {
+      const b = this.band(c.score).label;
+      if (st.fBand !== "All" && b !== st.fBand) return false;
+      if (st.fStage !== "All" && stageOfRaw(c.name) !== st.fStage) return false;
+      if (st.fRec !== "All" && ownerOf(c.name) !== st.fRec) return false;
+      if (st.fQuery.trim() && c.name.toLowerCase().indexOf(st.fQuery.trim().toLowerCase()) < 0) return false;
+      return true;
+    };
+    const stageOfRaw = (n) => st.stages[n] || "qualified";
     const cand = CANDS.find((c) => c.name === st.candidateName) || CANDS[0];
     const cb = this.band(cand.score);
-    const stageOf = (n) => st.stages[n] || "sourced";
+    const selNames = Object.keys(st.sel).filter((k) => st.sel[k]);
+    const resSelNames = Object.keys(st.resSel).filter((k) => st.resSel[k]);
+    const stageOf = (n) => st.stages[n] || "qualified";
     const stageLabel = (id) => { const s = STAGES.find((x) => x.id === id); return s ? s.label : id; };
 
     const cols = STAGES.map((s) => {
-      const cards = CANDS.filter((c) => c.job === st.boardJob && stageOf(c.name) === s.id).sort((a, b) => b.score - a.score);
+      const cards = CANDS.filter((c) => c.job === st.boardJob && stageOf(c.name) === s.id && passes(c)).sort((a, b) => b.score - a.score);
       return { ...s, cards, count: cards.length };
     }).filter((s) => s.id !== "video" || mods.video);
 
@@ -1980,7 +2413,7 @@ class Component extends DCLogic {
       { name: "Nice-to-have", bg: "var(--muted)", fg: "var(--muted-ink)", border: "var(--line)" }
     ];
     const jobOf = (t) => JOBS.find((j) => j.title === t) || JOBS[0];
-    const tplStage = st.tpls[st.tplStage] ? st.tplStage : "resume";
+    const tplStage = st.tpls[st.tplStage] ? st.tplStage : "qualified";
     const tplTrans = TRANSITIONS.find((x) => x.stage === tplStage);
     const transOn = !!(tplTrans && st.trans[tplTrans.id]);
     const IMPORTANCE = [
@@ -1994,12 +2427,69 @@ class Component extends DCLogic {
       if (st.wSkills.some((s) => s.name.toLowerCase() === n.toLowerCase())) { this.flash(n + " is already listed"); this.setState({ skillInput: "" }); return; }
       this.setState({ wSkills: st.wSkills.concat([{ name: n, imp: 0, aliases: [] }]), skillInput: "" });
     };
+    const visibleJob = (j) => {
+      const a = st.assign[j.title] || {};
+      if (role === "recruiter") return a.rec === me.name;
+      if (role === "lead") return a.lead === me.name;
+      return true;
+    };
     const active = jobOf(st.activeJob);
+    const resRows = st.cands.filter((c) => c.job === active.title).sort((a, b) => b.score - a.score);
+    const aboveCount = resRows.filter((r) => r.score >= st.cutoff).length;
+    const aboveNoun = aboveCount === 1 ? "candidate" : "candidates";
+    const craftList = st.cands.filter((c) => c.job === active.title && (st.stages[c.name] === "craft" || st.stages[c.name] === "shortlisted"));
+    const reviewName = craftList.some((c) => c.name === st.reviewCand) ? st.reviewCand : (craftList[0] ? craftList[0].name : st.reviewCand);
+    const reviewScore = (st.cands.find((c) => c.name === reviewName) || { score: 92 }).score;
+    const reviewBand = this.band(reviewScore);
+    const craftSections = (CRAFT_TEMPLATES.find((t) => t.id === st.craftTpl) || CRAFT_TEMPLATES[0]).sections;
+    const reviewCandRec = st.cands.find((c) => c.name === reviewName) || { name: reviewName, score: 92, skills: ["Go", "Kubernetes", "Postgres"], role: active.title };
+    const rvEmail = reviewName.toLowerCase().split(" ").join(".") + "@example.com";
+    const rvPhone = "+971 5• ••• 44" + (10 + (reviewName.length * 7) % 80);
+    const rvYears = 5 + (reviewName.length % 6);
+    const rvSkills = (reviewCandRec.skills || []).join(", ") || "Go, Postgres";
+    const rvTopSkill = (reviewCandRec.skills || ["Go"])[0];
+    const reSeat = (t) => t
+      .split("Priya Raman").join(reviewName)
+      .split("priya.raman@example.com").join(rvEmail)
+      .split("+971 5• ••• 4412").join(rvPhone)
+      .split("8 years").join(rvYears + " years")
+      .split("8 yrs").join(rvYears + " yrs")
+      .split("Go, Kubernetes, Postgres, gRPC, AWS, Terraform, Redis, observability tooling.").join(rvSkills + ", plus adjacent tooling.")
+      .split("Go · Kubernetes · Postgres · gRPC · AWS · Terraform").join((reviewCandRec.skills || []).join(" · ") || rvTopSkill)
+      .split("Match score 92").join("Match score " + reviewCandRec.score)
+      .split("score 92").join("score " + reviewCandRec.score);
+    const myLeads = st.members.filter((m) => m.role === "lead").map((m) => m.name);
+    const myRecruiters = st.members.filter((m) => m.role === "recruiter" && (role !== "lead" || m.reportsTo === me.name)).map((m) => m.name);
+    const assignOf = (t) => st.assign[t] || { lead: "", rec: "" };
+    const canAssignLead = role === "manager" || role === "admin";
+    const canAssignRec = role === "lead" || role === "manager" || role === "admin";
     const decorate = (j) => {
+      const asg = assignOf(j.title);
       const c = j.status === "Active" ? { fg: "var(--success)", bg: "oklch(0.58 0.18 145 / .12)", border: "oklch(0.85 0.08 145)" }
         : { fg: "var(--muted-ink)", bg: "var(--muted)", border: "var(--line)" };
       const posts = st.postings[j.title] || {};
       return { ...j, statusFg: c.fg, statusBg: c.bg, statusBorder: c.border, vaultMatches: j.vault,
+        leadName: asg.lead || "—", recName: asg.rec || "—",
+        trail: "TL: " + (asg.lead || "—") + " · Recruiter: " + (asg.rec || "—"),
+        trailFg: asg.lead && asg.rec ? "var(--ink)" : "oklch(0.45 0.13 65)",
+        leadFg: asg.lead ? "var(--ink)" : "oklch(0.45 0.13 65)",
+        recFg: asg.rec ? "var(--ink)" : "oklch(0.45 0.13 65)",
+        canAssignLead, canAssignRec: canAssignRec && !!asg.lead,
+        recBlocked: canAssignRec && !asg.lead,
+        leadOptions: [{ id: "", label: "Unassigned" }].concat(myLeads.map((n) => ({ id: n, label: n }))),
+        recOptions: [{ id: "", label: "Unassigned" }].concat((asg.lead
+          ? st.members.filter((m) => m.role === "recruiter" && m.reportsTo === asg.lead).map((m) => m.name)
+          : myRecruiters).map((n) => ({ id: n, label: n }))),
+        onLead: (e) => {
+          const v = e.target.value;
+          this.setState({ assign: { ...st.assign, [j.title]: { lead: v, rec: v === asg.lead ? asg.rec : "" } } });
+          this.flash(v ? j.title + " reassigned to " + v + (asg.rec && v !== asg.lead ? " · recruiter cleared" : "") : j.title + " unassigned");
+        },
+        onRec: (e) => {
+          const v = e.target.value;
+          this.setState({ assign: { ...st.assign, [j.title]: { lead: asg.lead, rec: v } } });
+          this.flash(v ? j.title + " assigned to " + v : j.title + " · recruiter cleared");
+        },
         open: () => this.setState({ screen: "job", activeJob: j.title, postMenu: "", files: [] }),
         openDb: () => this.setState({ screen: "db", activeJob: j.title, dbFrom: "job" }),
         togglePost: () => this.setState({ postMenu: st.postMenu === j.title ? "" : j.title }),
@@ -2026,7 +2516,7 @@ class Component extends DCLogic {
         bg: o.name === st.workspace ? "oklch(0.7 0.19 292 / .16)" : "transparent",
         pick: () => this.setState({ workspace: o.name, wsOpen: false }) })),
       nav: navDefs.map((it) => {
-        const active = screen === it.id || (it.id === "jobs" && (screen === "newjob" || screen === "job" || screen === "db")) || (it.id === "board" && screen === "candidate");
+        const active = screen === it.id || (it.id === "jobs" && (screen === "newjob" || screen === "job" || screen === "db" || screen === "results")) || (it.id === "board" && (screen === "candidate" || screen === "review"));
         return { ...it, go: this.go(it.id), bg: active ? "oklch(0.7 0.19 292 / .15)" : "transparent",
           fg: active ? "oklch(0.78 0.15 292)" : "oklch(0.94 0.015 292 / .6)", weight: active ? 600 : 500 };
       }),
@@ -2172,16 +2662,17 @@ class Component extends DCLogic {
             { label: "Unassigned roles", value: "1", note: "Needs an owner", color: "oklch(0.45 0.13 65)" }
           ],
       teamTableTitle: role === "lead" ? "My recruiters" : "My leads & recruiters",
-      teamMembers: role === "lead" ? perfRows.filter((r) => r.reportsTo === "Nadia Sheikh") : perfRows,
+      teamMembers: role === "lead" ? perfRows.filter((r) => r.reportsTo === me.name) : perfRows,
       leadQueue: CANDS.slice(0, 5).map((c) => {
         const s = stageOf(c.name);
         return { name: c.name, initials: this.initials(c.name), role: c.role,
           stage: stageLabel(s),
-          action: s === "call" ? "Call pending" : s === "video" ? "Interview to review" : s === "resume" ? "Scored — needs triage" : s === "shortlisted" ? "Ready for the client" : "New from " + st.dbName,
+          action: s === "call" ? "Call pending" : s === "video" ? "Interview to review" : s === "qualified" ? "Passed the cutoff — call next" : s === "shortlisted" ? "Ready to craft" : "Crafting in review",
           open: () => this.setState({ screen: "candidate", candidateName: c.name, decision: "" }) };
       }),
       boards: BOARDS,
-      postingRows: JOBS.filter((j) => j.status === "Active").map((j) => ({ title: j.title, owner: j.owner, applicants: j.applicants,
+      postingRows: JOBS.filter((j) => j.status === "Active" && visibleJob(j)).map((j) => ({ title: j.title,
+        owner: (st.assign[j.title] || {}).rec || (st.assign[j.title] || {}).lead || "Unassigned", applicants: j.applicants,
         cells: BOARDS.map((b) => { const s = (st.postings[j.title] || {})[b] || "Not posted"; return { status: s, ...postStatusStyle(s) }; }) })),
 
       myKpis: [
@@ -2210,17 +2701,59 @@ class Component extends DCLogic {
         bg: st.callMode === m.id ? "var(--brand)" : "white", fg: st.callMode === m.id ? "white" : "var(--muted-ink)",
         border: st.callMode === m.id ? "var(--brand)" : "var(--line)" })),
       onDragOver: (e) => e.preventDefault(),
-      columns: cols.map((col) => ({
+      filterBands: ["All", "Strong", "Good", "Maybe", "Weak"].map((b) => ({ id: b, label: b === "All" ? "All bands" : b })),
+      filterStages: [{ id: "All", label: "All stages" }].concat(STAGES.filter((s) => s.id !== "video" || mods.video).map((s) => ({ id: s.id, label: s.label }))),
+      filterRecs: [{ id: "All", label: "All recruiters" }].concat(RECRUITERS.map((r) => ({ id: r, label: r }))),
+      fBand: st.fBand, onFBand: (e) => this.setState({ fBand: e.target.value }),
+      fStage: st.fStage, onFStage: (e) => this.setState({ fStage: e.target.value }),
+      fRec: st.fRec, onFRec: (e) => this.setState({ fRec: e.target.value }),
+      fQuery: st.fQuery, onFQuery: (e) => this.setState({ fQuery: e.target.value }),
+      filtersOn: st.fBand !== "All" || st.fStage !== "All" || st.fRec !== "All" || !!st.fQuery.trim(),
+      clearFilters: () => this.setState({ fBand: "All", fStage: "All", fRec: "All", fQuery: "" }),
+      selCount: selNames.length, hasSel: selNames.length > 0,
+      bulkStage: st.bulkStage, onBulkStage: (e) => this.setState({ bulkStage: e.target.value }),
+      bulkMove: () => {
+        const target = st.bulkStage, stages = { ...st.stages };
+        let moved = 0, blocked = 0;
+        selNames.forEach((n) => {
+          if (target === "craft" && stages[n] !== "shortlisted" && stages[n] !== "craft") { blocked++; return; }
+          stages[n] = target; moved++;
+        });
+        this.setState({ stages, sel: {} });
+        this.flash(moved + " moved to " + stageLabel(target) + (blocked ? " · " + blocked + " skipped (must be shortlisted first)" : ""));
+      },
+      bulkClear: () => this.setState({ sel: {} }),
+      bulkWhatsApp: () => this.flash("WhatsApp draft opened for " + selNames.length + " candidates"),
+      bulkEmail: () => this.flash("Email composer opened for " + selNames.length + " candidates"),
+      columns: cols.map((col) => {
+        const allSel = col.cards.length > 0 && col.cards.every((c) => st.sel[c.name]);
+        return {
         label: col.label, count: col.count, color: col.color, isCall: col.id === "call",
         borderColor: st.drag ? "oklch(0.82 0.08 292)" : "var(--line)",
-        bgColor: col.id === "shortlisted" ? "oklch(0.58 0.18 145 / .05)" : "oklch(0.985 0.012 292)",
+        bgColor: col.id === "shortlisted" ? "oklch(0.58 0.18 145 / .05)" : col.id === "craft" ? "oklch(0.78 0.13 55 / .07)" : "oklch(0.985 0.012 292)",
         onDrop: (e) => { e.preventDefault(); if (st.drag) { this.setStage(st.drag, col.id); this.setState({ drag: "" }); } },
+        hasCards: col.cards.length > 0, allSel,
+        selectAllLabel: allSel ? "Clear column" : "Select all in column",
+        selectAll: () => {
+          const next = { ...st.sel };
+          col.cards.forEach((c) => { if (allSel) delete next[c.name]; else next[c.name] = true; });
+          this.setState({ sel: next });
+        },
         cards: col.cards.map((c) => {
           const b = this.band(c.score), inCall = col.id === "call", noteList = st.notes[c.name] || [];
+          const inCraft = col.id === "craft";
           return { name: c.name, role: c.role, score: c.score, initials: this.initials(c.name),
             fg: b.fg, bg: b.bg, border: b.border, stage: col.id,
+            checked: !!st.sel[c.name],
+            cardBg: st.sel[c.name] ? "var(--brand-soft)" : "white",
+            cardBorder: st.sel[c.name] ? "var(--ring)" : "var(--line)",
+            toggleSel: () => { const next = { ...st.sel }; if (next[c.name]) delete next[c.name]; else next[c.name] = true; this.setState({ sel: next }); },
+            inCraft, craftLabel: st.reviewDone[c.name] ? "✓ Reviewed — reopen" : "Open Review Desk →",
+            craftFg: st.reviewDone[c.name] ? "var(--success)" : "var(--brand)",
             onDragStart: () => this.setState({ drag: c.name }),
-            open: () => this.setState({ screen: "candidate", candidateName: c.name, decision: "" }),
+            open: () => inCraft
+              ? this.setState({ screen: "review", reviewCand: c.name })
+              : this.setState({ screen: "candidate", candidateName: c.name, decision: "" }),
             onStage: (e) => this.setStage(c.name, e.target.value),
             actions: this.actionsFor(c.name),
             inCall, notes: noteList,
@@ -2238,10 +2771,10 @@ class Component extends DCLogic {
               this.flash("Call note saved for " + c.name);
             } };
         })
-      })),
+      }; }),
       noteDraft: st.noteDraft, onNoteDraft: (e) => this.setState({ noteDraft: e.target.value }),
       closeNote: () => this.setState({ noteFor: "", noteDraft: "" }),
-      gridRows: CANDS.filter((c) => c.job === st.boardJob).sort((a, b) => b.score - a.score).map((c) => {
+      gridRows: CANDS.filter((c) => c.job === st.boardJob && passes(c)).sort((a, b) => b.score - a.score).map((c) => {
         const b = this.band(c.score);
         return { name: c.name, role: c.role, score: c.score, band: b.label, fg: b.fg, bg: b.bg, border: b.border,
           initials: this.initials(c.name), stage: stageOf(c.name),
@@ -2267,16 +2800,140 @@ class Component extends DCLogic {
       onCandidateStage: (e) => this.setStage(cand.name, e.target.value),
       detailActions: this.actionsFor(cand.name).map((a) => ({ ...a, label: a.id === "wa" ? "WhatsApp" : a.id === "em" ? "Email" : (mods.ivr && st.callMode === "ivr" ? "IVR call" : "Call") })),
       candidateNotes: st.notes[cand.name] || [], noCallNotes: !(st.notes[cand.name] || []).length,
-      modVideo: !!mods.video, modVault: !!mods.vault, vaultOff: !mods.vault, modPosting: !!mods.posting, modAutomations: !!mods.automations,
+      modVideo: !!mods.video, modVault: !!mods.vault, vaultOff: !mods.vault && st.extracted,
+      vaultPanel: !!mods.vault && st.extracted, modPosting: !!mods.posting, modAutomations: !!mods.automations,
       automationsOff: !mods.automations,
       decision: st.decision,
       decideShortlist: () => { this.setStage(cand.name, "shortlisted"); this.setState({ decision: "Shortlisted — " + tierLabel("manager") + " notified." }); },
       decideReject: () => this.setState({ decision: "Rejected — polite decline sent from template." }),
 
-      jobs: JOBS.filter((j) => (st.jobTab === "All" || j.status === st.jobTab) && (!st.reviewOnly || j.needsReview)).map(decorate),
+      jobs: JOBS.filter((j) => (st.jobTab === "All" || j.status === st.jobTab) && (!st.reviewOnly || j.needsReview) && visibleJob(j)).map(decorate),
+      noJobs: JOBS.filter((j) => (st.jobTab === "All" || j.status === st.jobTab) && (!st.reviewOnly || j.needsReview) && visibleJob(j)).length === 0,
+      noJobsCopy: isRec ? "No jobs are assigned to you yet — your Team Lead assigns roles from their Jobs list."
+        : role === "lead" ? "No jobs are assigned to you yet — your Team Manager assigns roles from their Jobs list."
+        : "No jobs match these filters.",
       job: decorate(active),
       isListView: st.jobView === "list", isBlockView: st.jobView === "block",
       isJobDetail: screen === "job", isDb: screen === "db",
+      isResults: screen === "results", isReviewDesk: screen === "review",
+
+      jobScored: !!st.scoredJobs[active.title], scoredCount: active.scored,
+      goResults: () => this.setState({ screen: "results", activeJob: active.title, boardJob: active.title }),
+      resTotal: resRows.length,
+      resAbove: resRows.filter((r) => r.score >= st.cutoff).length,
+      resBelow: resRows.filter((r) => r.score < st.cutoff).length,
+      cutoff: st.cutoff, onCutoff: (e) => this.setState({ cutoff: Number(e.target.value) }),
+      cutMin: st.cutMin, cutMax: st.cutMax,
+      onCutMin: (e) => this.setState({ cutMin: Number(e.target.value) || 0 }),
+      onCutMax: (e) => this.setState({ cutMax: Number(e.target.value) || 100 }),
+      piNote: st.cq.mask ? "PI masked · configure in Job setup" : "PI shown · configure in Job setup",
+      resShownLabel: resRows.filter((r) => r.score >= st.cutMin && r.score <= st.cutMax).length + " shown · " + resSelNames.length + " selected",
+      resRows: resRows.filter((r) => r.score >= st.cutMin && r.score <= st.cutMax).map((c) => {
+        const b = this.band(c.score), above = c.score >= st.cutoff, g = gapsOf(c);
+        return { name: c.name, role: c.role, score: c.score, initials: this.initials(c.name),
+          fg: b.fg, bg: b.bg, border: b.border,
+          contact: (st.cq.mask ? "••••••@••••• · +•• •• ••• ••" : c.name.toLowerCase().split(" ").join(".") + "@example.com · +971 5• ••• 44" + (10 + (c.name.length % 80))),
+          dims: dims(c).map((d) => ({ k: d.k, v: d.v + "%", width: d.v + "%", color: d.v >= 85 ? "var(--success)" : d.v >= 70 ? "var(--c2)" : "var(--c4)" })),
+          cutLabel: above ? "Above cutoff" : "Below cutoff",
+          cutFg: above ? "var(--success)" : "var(--muted-ink)",
+          cutBg: above ? "oklch(0.58 0.18 145 / .12)" : "var(--muted)",
+          cutBorder: above ? "oklch(0.85 0.08 145)" : "var(--line)",
+          gapLabel: g + (g > 1 ? " gaps" : " gap"),
+          rowOpacity: above ? 1 : 0.55,
+          rowBg: st.resSel[c.name] ? "var(--brand-soft)" : "white",
+          checked: !!st.resSel[c.name],
+          toggle: () => { const next = { ...st.resSel }; if (next[c.name]) delete next[c.name]; else next[c.name] = true; this.setState({ resSel: next }); },
+          expanded: st.resExpand === c.name, chevron: st.resExpand === c.name ? "▴" : "▾",
+          toggleExpand: () => this.setState({ resExpand: st.resExpand === c.name ? "" : c.name }),
+          gapList: CAND_DETAIL.gaps.slice(0, g),
+          actions: this.actionsFor(c.name),
+          open: () => this.setState({ screen: "candidate", candidateName: c.name, decision: "" }) };
+      }),
+      resSelCount: resSelNames.length, hasResSel: resSelNames.length > 0, noResSel: resSelNames.length === 0,
+      moveLabel: "Move " + aboveCount + " above-cutoff " + aboveNoun + " → Qualified",
+      moveAboveCutoff: () => {
+        if (!aboveCount) { this.flash("No candidates above " + st.cutoff + "% — lower the cutoff"); return; }
+        const stages = { ...st.stages };
+        resRows.filter((r) => r.score >= st.cutoff).forEach((r) => { stages[r.name] = "qualified"; });
+        this.setState({ stages, resSel: {}, screen: "board", boardJob: active.title });
+        this.flash(aboveCount + " " + aboveNoun + " moved to Qualified");
+      },
+      selectAboveCutoff: () => {
+        const next = {}; resRows.filter((r) => r.score >= st.cutoff).forEach((r) => { next[r.name] = true; });
+        this.setState({ resSel: next });
+        this.flash(Object.keys(next).length + " above-cutoff candidates selected");
+      },
+      shortlistSelected: () => {
+        if (!resSelNames.length) { this.flash("Select candidates first"); return; }
+        const stages = { ...st.stages };
+        resSelNames.forEach((n) => { stages[n] = "qualified"; });
+        this.setState({ stages, resSel: {}, screen: "board", boardJob: active.title });
+        this.flash(resSelNames.length + " moved to Qualified");
+      },
+
+      reviewRail: craftList.map((c) => ({ name: c.name, initials: this.initials(c.name),
+        active: c.name === reviewName,
+        bg: c.name === reviewName ? "var(--brand-soft)" : "transparent",
+        fg: c.name === reviewName ? "var(--brand)" : "var(--ink)",
+        stateLabel: st.reviewDone[c.name] ? "Done" : "Pending",
+        stateFg: st.reviewDone[c.name] ? "var(--success)" : "oklch(0.45 0.13 65)",
+        pick: () => this.setState({ reviewCand: c.name }) })),
+      reviewPending: craftList.filter((c) => !st.reviewDone[c.name]).length,
+      reviewDoneCount: craftList.filter((c) => st.reviewDone[c.name]).length,
+      reviewName: reviewName,
+      reviewRole: (CANDS.find((c) => c.name === reviewName) || {}).role || active.title,
+      reviewScore: reviewScore,
+      reviewRing: "conic-gradient(" + reviewBand.fg + " 0% " + reviewScore + "%, var(--muted) " + reviewScore + "% 100%)",
+      reviewScoreFg: reviewBand.fg,
+      reviewTplName: (CRAFT_TEMPLATES.find((t) => t.id === st.craftTpl) || CRAFT_TEMPLATES[0]).name,
+      mappedCount: ORIGINAL_SECTIONS.filter((s) => s.mapped).length,
+      unmappedCount: ORIGINAL_SECTIONS.filter((s) => !s.mapped).length,
+      resolveSummary: ORIGINAL_SECTIONS.every((s) => s.mapped)
+        ? "All sections mapped confidently."
+        : ORIGINAL_SECTIONS.filter((s) => s.mapped).length + " of " + ORIGINAL_SECTIONS.length + " sections mapped confidently — " + ORIGINAL_SECTIONS.filter((s) => !s.mapped).length + " need a human look.",
+      originalSections: ORIGINAL_SECTIONS.map((raw) => {
+        const s = { ...raw, preview: reSeat(raw.preview) };
+        const open = !!st.showFull[reviewName + s.name];
+        return { name: s.name, mapped: s.mapped,
+          tag: s.mapped ? "mapped" : "unmapped",
+          tagFg: s.mapped ? "var(--success)" : "oklch(0.45 0.13 65)",
+          tagBg: s.mapped ? "oklch(0.58 0.18 145 / .12)" : "oklch(0.67 0.17 65 / .13)",
+          tagBorder: s.mapped ? "oklch(0.85 0.08 145)" : "oklch(0.88 0.06 65)",
+          preview: open ? s.preview : s.preview.slice(0, 78) + (s.preview.length > 78 ? "…" : ""),
+          linkLabel: open ? "hide full content" : "show full content",
+          toggle: () => this.setState({ showFull: { ...st.showFull, [reviewName + s.name]: !open } }) };
+      }),
+      actionItems: ACTION_ITEMS.map((raw, i) => {
+        const t = reSeat(raw), key = reviewName + i, done = !!st.checkedItems[key];
+        return { text: t, done, mark: done ? "✓" : "",
+          markBg: done ? "var(--brand)" : "white", markFg: done ? "white" : "transparent",
+          markBorder: done ? "var(--brand)" : "var(--line)",
+          textFg: done ? "var(--muted-ink)" : "var(--ink)",
+          decoration: done ? "line-through" : "none",
+          toggle: () => this.setState({ checkedItems: { ...st.checkedItems, [key]: !done } }) };
+      }),
+      toolbar: TOOLBAR.map((t) => ({ label: t, weight: t === "B" ? 700 : 500, style: t === "I" ? "italic" : "normal",
+        deco: t === "U" ? "underline" : t === "S" ? "line-through" : "none",
+        bg: t === "H" ? "oklch(0.9 0.14 95)" : "white",
+        click: () => this.flash(t === "H" ? "Highlight applied" : "Formatting applied") })),
+      toolbar2: TOOLBAR2.map((t) => ({ label: t, click: () => this.flash(t + " — demo action") })),
+      craftHeader: { name: reviewName, phone: st.cq.mask ? "+•• •• ••• ••••" : rvPhone,
+        email: st.cq.mask ? "•••••••@•••••.com" : rvEmail,
+        company: st.cq.company, tagline: st.cq.tagline },
+      craftSections: craftSections.map((name) => ({
+        name,
+        bullets: (CRAFT_CONTENT[name] || []).map((b, i) => ({ text: reSeat(b),
+          removed: !!st.craftRemoved[reviewName + name + i],
+          remove: () => this.setState({ craftRemoved: { ...st.craftRemoved, [reviewName + name + i]: true } }) }))
+          .filter((b) => !b.removed),
+        addBullet: () => this.flash("New bullet added to " + name)
+      })),
+      saveLater: () => { this.setState({ screen: "board", boardJob: active.title }); this.flash("Draft saved for " + reviewName); },
+      markReviewed: () => {
+        this.setState({ reviewDone: { ...st.reviewDone, [reviewName]: true } });
+        this.flash(reviewName + " marked reviewed — crafted CV ready to download");
+      },
+      reviewedAlready: !!st.reviewDone[reviewName],
       jobTabs: ["All", "Active", "Archived"].map((t) => ({ label: t,
         count: t === "All" ? JOBS.length : JOBS.filter((j) => j.status === t).length,
         pick: () => this.setState({ jobTab: t }), bg: st.jobTab === t ? "white" : "transparent",
@@ -2289,6 +2946,7 @@ class Component extends DCLogic {
         bg: st.reviewOnly ? "oklch(0.67 0.17 65 / .16)" : "white",
         fg: st.reviewOnly ? "oklch(0.45 0.13 65)" : "var(--muted-ink)",
         border: st.reviewOnly ? "oklch(0.85 0.08 65)" : "var(--line)" },
+      assignReadOnly: isRec,
       jobFacts: [
         { k: "Job ID", v: active.jobId }, { k: "Status", v: active.status },
         { k: "Version", v: active.version || "v1" }, { k: "Skills", v: active.skillsCount },
@@ -2307,7 +2965,7 @@ class Component extends DCLogic {
       dropFiles: (e) => { e.preventDefault(); this.setState({ files: st.files.concat([{ name: "dropped-resume.pdf", size: "0.8 MB" }]) }); this.flash("Resume added"); },
       scoreFiles: () => {
         if (!st.files.length) { this.flash("Add resumes first"); return; }
-        this.setState({ files: [], screen: "board", boardJob: active.title });
+        this.setState({ files: [], screen: "results", boardJob: active.title, scoredJobs: { ...st.scoredJobs, [active.title]: true } });
         this.flash(st.files.length + " resumes scored against " + active.title);
       },
       toggleScorecard: () => this.setState({ scOpen: !st.scOpen }),
@@ -2356,13 +3014,13 @@ class Component extends DCLogic {
         const stages = { ...st.stages };
         const add = [];
         picked.forEach((n) => {
-          stages[n] = "sourced";
+          stages[n] = "qualified";
           if (st.cands.some((c) => c.name === n && c.job === active.title)) return;
           const src = DB_CANDIDATES.find((c) => c.name === n);
-          add.push({ name: n, role: active.title, job: active.title, score: 60 + ((n.length * 7) % 32), stage: "sourced", skills: src ? src.skills : [] });
+          add.push({ name: n, role: active.title, job: active.title, score: 60 + ((n.length * 7) % 32), stage: "qualified", skills: src ? src.skills : [] });
         });
         this.setState({ cands: st.cands.concat(add), stages, dbSel: {}, screen: "board", boardJob: active.title });
-        this.flash(picked.length + " candidates added to " + active.title + " · Sourced");
+        this.flash(picked.length + " candidates added to " + active.title + " · Qualified");
       },
       openDbForNew: () => this.setState({ screen: "db", dbFrom: "newjob", activeJob: st.newTitle }),
 
@@ -2372,6 +3030,9 @@ class Component extends DCLogic {
         dotBg: i === 0 ? "var(--brand)" : "white", dotFg: i === 0 ? "white" : "var(--muted-ink)",
         dotBorder: i === 0 ? "var(--brand)" : "var(--line)",
         fg: i === 0 ? "var(--ink)" : "var(--muted-ink)", weight: i === 0 ? 600 : 500 })),
+      canAssignOnCreate: canAssignLead,
+      leadChoices: [{ id: "", label: "Assign later" }].concat(myLeads.map((n) => ({ id: n, label: n }))),
+      newLead: st.newLead, onNewLead: (e) => this.setState({ newLead: e.target.value }),
       quals: QUALS, wQual: st.wQual, onWQual: (e) => this.setState({ wQual: e.target.value }),
       wMin: st.wMin, onWMin: (e) => this.setState({ wMin: e.target.value }),
       wMax: st.wMax, onWMax: (e) => this.setState({ wMax: e.target.value }),
@@ -2382,11 +3043,19 @@ class Component extends DCLogic {
       extractKeywords: () => {
         const text = (st.jd || "").toLowerCase();
         let found = KEYWORD_BANK.filter((k) => text.indexOf(k.toLowerCase()) > -1);
-        if (found.length < 4) found = found.concat(KEYWORD_BANK.slice(0, 6).filter((k) => found.indexOf(k) < 0));
-        const fresh = found.filter((k) => !st.wSkills.some((s) => s.name === k));
-        this.setState({ kw: fresh, kwShown: true });
-        this.flash(fresh.length + " keywords extracted from the JD");
+        if (found.length < 5) found = found.concat(KEYWORD_BANK.slice(0, 7).filter((k) => found.indexOf(k) < 0));
+        const rows = found.map((k, i) => ({ name: k, imp: i < 3 ? 0 : i < 6 ? 1 : 2, aliases: [] }));
+        this.setState({ wSkills: rows, extracted: true, kw: [], kwShown: false });
+        this.flash(rows.length + " skills extracted from the JD — weight them below");
       },
+      extracted: st.extracted, notExtracted: !st.extracted,
+      craftTemplates: CRAFT_TEMPLATES.map((t) => ({ id: t.id, label: t.name })),
+      craftTpl: st.craftTpl, onCraftTpl: (e) => st.craftLocked ? this.flash("Template locked for this job") : this.setState({ craftTpl: e.target.value }),
+      craftTplSections: craftSections.join(" · "),
+      craftLocked: st.craftLocked,
+      craftLockTrack: st.craftLocked ? "var(--brand)" : "oklch(0.88 0.02 292)",
+      craftLockKnob: st.craftLocked ? "22px" : "3px",
+      toggleCraftLock: () => { this.setState({ craftLocked: !st.craftLocked }); this.flash(st.craftLocked ? "Template unlocked" : "Template locked for this job"); },
       addKeywords: () => {
         const add = st.kw.filter((k) => !st.wSkills.some((s) => s.name === k)).map((k) => ({ name: k, imp: 1, aliases: [] }));
         this.setState({ wSkills: st.wSkills.concat(add), kw: [], kwShown: false });
@@ -2416,14 +3085,20 @@ class Component extends DCLogic {
         return { name, level: lv.name, bg: lv.bg, fg: lv.fg, border: lv.border,
           cycle: () => this.setState({ levels: { ...st.levels, [name]: (st.levels[name] + 1) % 3 } }) };
       }),
-      createJob: () => { this.setState({ screen: "job", activeJob: st.newTitle }); this.flash(st.newTitle + " saved · " + st.wSkills.length + " skills weighted · " + jobOf(st.newTitle).vault + " " + st.dbName + " matches queued"); },
+      createJob: () => {
+        if (!st.extracted) { this.flash("Extract keywords to set the required skills first"); return; }
+        const prev = st.assign[st.newTitle] || { lead: "", rec: "" };
+        this.setState({ screen: "job", activeJob: st.newTitle,
+          assign: { ...st.assign, [st.newTitle]: { lead: st.newLead || prev.lead, rec: st.newLead && st.newLead !== prev.lead ? "" : prev.rec } } });
+        this.flash(st.newTitle + " saved · " + st.wSkills.length + " skills weighted · " + jobOf(st.newTitle).vault + " " + st.dbName + " matches queued");
+      },
       goJobs: this.go("jobs"),
       goIntegrations: () => this.setState({ screen: "settings", section: "integrations" }),
       nextSteps: [
         { i: 1, text: "Post to Naukri Gulf and LinkedIn from the job card — status tracked for your lead and manager." },
-        { i: 2, text: "Resume Scoring ranks every applicant against your must-have skills." },
+        { i: 2, text: "Resume scoring ranks every applicant; everything above your cutoff lands on the board as Qualified." },
         { i: 3, text: mods.ivr ? "Call stage runs as a human call or IVR, with notes logged per candidate." : "Call stage runs as a human call, with notes logged per candidate." },
-        { i: 4, text: mods.video ? "Candidates above 70 get an AI video interview, then land in your shortlist." : "Strong candidates land straight in your shortlist for a human decision." }
+        { i: 4, text: mods.video ? "Survivors take an AI video interview, get shortlisted, then move to Craft for the Review Desk." : "Survivors get shortlisted, then move to Craft for the Review Desk." }
       ],
 
       settingsNav: sections.map((s) => ({ label: s.label, icon: s.icon, pick: () => this.setState({ section: s.id }),
@@ -2504,7 +3179,7 @@ class Component extends DCLogic {
         pick: () => this.setState({ tab: t }), bg: st.tab === t ? "white" : "transparent",
         fg: st.tab === t ? "var(--ink)" : "var(--muted-ink)", shadow: st.tab === t ? "0 2px 8px oklch(0.3 0.06 292 / .1)" : "none" })),
       isEmail: st.tab === "Email" || !mods.whatsapp, isWhatsapp: st.tab === "WhatsApp" && mods.whatsapp,
-      stageTabs: STAGES.filter((s) => s.id !== "sourced" && (s.id !== "video" || mods.video)).map((s) => {
+      stageTabs: STAGES.filter((s) => s.id !== "video" || mods.video).map((s) => {
         const t = TRANSITIONS.find((x) => x.stage === s.id), on = t && st.trans[t.id];
         return { label: s.label, active: st.tplStage === s.id,
           pick: () => this.setState({ tplStage: s.id }),
